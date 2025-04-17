@@ -1,0 +1,63 @@
+syntax="proto3";
+
+package proto;
+
+option go_package = "github.com/billzayy/social-media/back-end/authen-service/api";
+
+service AuthService {
+    rpc Register(RegisterReq) returns (RegisterResp);
+    rpc Login(LoginReq) returns (LoginResp);
+    rpc RefreshToken(RefreshTokenReq) returns (RefreshTokenResp);
+}
+
+message User{
+    string ID = 1;
+    string UserName = 2;
+    string FullName = 3;
+    string Email = 4;
+    string Password = 5;
+    string UserSince = 6;
+    string LastLogin = 7;
+    bool Active = 8;
+    string ProfilePicture = 9;
+}
+
+// Register Req & Resp
+message RegisterReq {
+    string UserName = 1;
+    string Email = 2;
+    string FirstName = 3;
+    string SurName = 4;
+    string Password = 5;
+    string Location = 6;
+    string BirthDate = 7;
+    string Description = 8;
+    repeated string Website = 9; 
+}
+
+message RegisterResp {
+    string message = 1;
+}
+
+// Login Req & Resp
+message LoginReq{
+    string UserName = 1;
+    string Password = 2;
+}
+
+message LoginResp{
+    string UserId = 1;
+    string Token = 2;
+    string Type = 3;
+}
+
+// RefreshToken Req & Resp
+message RefreshTokenReq{
+    string RefreshToken = 1;
+}
+
+message RefreshTokenResp{
+    string Token = 1;
+    string Type = 2;
+    string UserId = 3;
+}

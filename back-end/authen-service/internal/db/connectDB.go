@@ -13,7 +13,7 @@ func ConnectDB() (*sql.DB, error) {
 	err := godotenv.Load("../.env")
 
 	if err != nil {
-		if err := godotenv.Load("../internal/.env"); err != nil {
+		if err := godotenv.Load("./internal/.env"); err != nil {
 			log.Fatalf("Error loading .env on Postgres")
 		}
 	}
