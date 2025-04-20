@@ -1,0 +1,54 @@
+syntax="proto3";
+
+package proto;
+
+option go_package = "github.com/billzayy/social-media/back-end/post-service/api";
+
+import "google/protobuf/empty.proto";
+
+service PostService{
+    rpc AddPost(AddPostReq) returns (AddPostResp);
+    rpc GetPost(google.protobuf.Empty) returns (GetPostResp);
+    rpc DeletePost(DeletePostReq) returns (google.protobuf.Empty);
+}
+
+message AddPostReq{
+    string UserId = 1;
+    string Content = 2;
+    string CreatedAt = 3;
+}
+
+message AddPostResp{
+    string Message = 1; 
+}
+
+message GetPostResp{
+    repeated PostResp Posts = 1;
+}
+
+message PostResp {
+    string PostId = 1;
+    Users Author = 2;
+    string Content = 3;
+    repeated PostMedia Media = 4;
+    string CreatedAt = 5;
+    int32 Likes = 6;
+    int32 Comments = 7;
+    int32 Shares = 8;
+}
+
+message DeletePostReq{
+    string Id = 1;
+}
+
+message Users {
+    string UserId = 1;
+    string FullName = 2;
+    string ProfilePicture = 3;
+}
+
+message PostMedia{
+    string PostId = 1;
+    string Type = 2;
+    string Url = 3;
+}
