@@ -48,7 +48,7 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 		return
 	}
 
-	res, err := aH.AuthRepository.Login(userName, hashed, c)
+	res, cookie, err := aH.AuthRepository.Login(userName, hashed)
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusBadRequest, err.Error())
@@ -57,6 +57,7 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 
 	// Return Status OK
 	models.ResponseUser(c, http.StatusOK, res)
+	http.SetCookie(c.Writer, &cookie)
 }
 
 // This function will return a new AccessToken and RefreshToken
@@ -70,7 +71,7 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	userId, newToken, err := aH.AuthRepository.RefreshToken(getCookie, c)
+	userId, newToken, cookie, err := aH.AuthRepository.RefreshToken(getCookie)
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
@@ -83,4 +84,6 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		Token:  newToken,
 		Type:   "Bearer",
 	})
+
+	http.SetCookie(c.Writer, &cookie)
 }

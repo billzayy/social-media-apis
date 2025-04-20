@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/billzayy/social-media/back-end/authen-service/internal/middleware"
@@ -69,7 +70,7 @@ func (ur *AuthRepository) Register(request models.RegisterRequest) error {
 }
 
 // Login Function
-func (ur *AuthRepository) Login(userName string, hashedPassword string, c *gin.Context) (models.UserToken, error) {
+func (ur *AuthRepository) Login(userName string, hashedPassword string) (models.UserToken, http.Cookie, error) {
 	ctx := context.Background()
 
 	query := fmt.Sprintf(`SELECT u."ID" FROM public."Users" u 
@@ -78,7 +79,7 @@ func (ur *AuthRepository) Login(userName string, hashedPassword string, c *gin.C
 	rows, err := ur.db.Query(query)
 
 	if err != nil {
-		return models.UserToken{}, err
+		return models.UserToken{}, http.Cookie{}, err
 	}
 	defer rows.Close()
 
@@ -86,14 +87,14 @@ func (ur *AuthRepository) Login(userName string, hashedPassword string, c *gin.C
 	for rows.Next() {
 		err = rows.Scan(&userId)
 		if err != nil {
-			return models.UserToken{}, err
+			return models.UserToken{}, http.Cookie{}, err
 		}
 	}
 
-	accessToken, err := middleware.GenerateTokens(userId, c)
+	accessToken, cookie, err := middleware.GenerateTokens(userId)
 
 	if err != nil {
-		return models.UserToken{}, err
+		return models.UserToken{}, http.Cookie{}, err
 	}
 
 	_, err = ur.rdb.HSet(ctx, "loginList", userId, accessToken).Result()
@@ -102,7 +103,7 @@ func (ur *AuthRepository) Login(userName string, hashedPassword string, c *gin.C
 		panic(err)
 	}
 
-	return models.UserToken{UserId: uuid.MustParse(userId), Token: accessToken, Type: "Bearer"}, nil
+	return models.UserToken{UserId: uuid.MustParse(userId), Token: accessToken, Type: "Bearer"}, cookie, nil
 }
 
 // Check User Function
@@ -158,7 +159,7 @@ func (ur *AuthRepository) CheckEmail(email string) (bool, error) {
 	return checked, nil
 }
 
-func (ur *AuthRepository) RefreshToken(cookieToken string, c *gin.Context) (string, string, error) {
+func (ur *AuthRepository) RefreshToken(cookieToken string) (string, string, http.Cookie, error) {
 	err := godotenv.Load("./internal/.env")
 
 	if err != nil {
@@ -166,7 +167,7 @@ func (ur *AuthRepository) RefreshToken(cookieToken string, c *gin.Context) (stri
 
 		if err != nil {
 			fmt.Println("Error loading file .env to refresh Token")
-			return "", "", err
+			return "", "", http.Cookie{}, err
 		}
 	}
 
@@ -174,15 +175,15 @@ func (ur *AuthRepository) RefreshToken(cookieToken string, c *gin.Context) (stri
 	userId, err := middleware.VerifyRefreshToken(cookieToken)
 
 	if err != nil {
-		return "", "", err
+		return "", "", http.Cookie{}, err
 	}
 
 	// Create new access & refresh token
-	newToken, err := middleware.GenerateTokens(userId, c)
+	newToken, cookie, err := middleware.GenerateTokens(userId)
 
 	if err != nil {
-		return "", "", err
+		return "", "", http.Cookie{}, err
 	}
 
-	return userId, newToken, nil
+	return userId, newToken, cookie, nil
 }

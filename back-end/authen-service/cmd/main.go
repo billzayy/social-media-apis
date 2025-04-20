@@ -1,9 +1,11 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	auth "github.com/billzayy/social-media/back-end/authen-service/api"
@@ -11,6 +13,7 @@ import (
 	"github.com/billzayy/social-media/back-end/authen-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/handlers"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/routes"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 
@@ -19,6 +22,14 @@ import (
 )
 
 func main() {
+	err := godotenv.Load("./internal/.env")
+
+	if err != nil {
+		if err := godotenv.Load("../internal/.env"); err != nil {
+			log.Fatalf("Error loading .env on Postgres")
+		}
+	}
+
 	postgres, err := db.ConnectDB()
 	defer postgres.Close()
 
@@ -36,7 +47,12 @@ func main() {
 
 	h := handlers.NewHandlers(repositories.NewRepositories(postgres, redis).AuthRepository)
 
-	go func() {
+	add := flag.String("mode", "", "Auth Service Mode")
+
+	flag.Parse()
+
+	switch {
+	case *add == "test":
 		r := gin.New()
 
 		r.Use(cors.New(cors.Config{
@@ -54,26 +70,26 @@ func main() {
 
 		routes.SetupRoutes(r, h)
 
-		log.Println("REST API server started on :3000")
-		r.Run(":3000") // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-	}()
+		log.Printf("REST API server started on :%v\n", os.Getenv("REST_PORT"))
+		r.Run(":" + os.Getenv("REST_PORT")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
-	go func() {
+	case *add == "deploy":
 		grpcServer := grpc.NewServer()
 		auth.RegisterAuthServiceServer(grpcServer, handlers.NewAuthGrpcServer(repositories.NewAuthRepository(postgres, redis)))
 
-		lis, err := net.Listen("tcp", ":50051")
+		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 
 		if err != nil {
 			log.Fatalf("failed to listen : %v", err)
 		}
 
-		log.Println("gRPC server started on :50051")
+		log.Printf("gRPC server started on :%v\n", os.Getenv("GRPC_PORT"))
 		if err := grpcServer.Serve(lis); err != nil {
 			log.Fatalf("failed to server : %v", err)
 		}
-	}()
 
-	// Block forever
-	select {}
+	default:
+		fmt.Println("Error command")
+		os.Exit(1)
+	}
 }

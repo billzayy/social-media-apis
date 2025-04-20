@@ -6,12 +6,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 )
 
-func RefreshToken(userId string, c *gin.Context) (http.Cookie, error) {
+func RefreshToken(userId string) (http.Cookie, error) {
 	err := godotenv.Load("./internal/.env")
 
 	if err != nil {

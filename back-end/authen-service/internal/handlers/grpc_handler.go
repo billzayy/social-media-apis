@@ -48,7 +48,7 @@ func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.
 		return nil, status.Errorf(codes.InvalidArgument, "invalid credentials")
 	}
 
-	token, err := aG.AuthRepository.Login(req.UserName, hashed, nil) // modify this if `c` is used
+	token, _, err := aG.AuthRepository.Login(req.UserName, hashed)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "login failed: %v", err)
 	}
@@ -61,7 +61,7 @@ func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.
 }
 
 func (aG *AuthGrpcServer) RefreshToken(ctx context.Context, req *auth.RefreshTokenReq) (*auth.RefreshTokenResp, error) {
-	userId, newToken, err := aG.AuthRepository.RefreshToken(req.RefreshToken, nil)
+	userId, newToken, _, err := aG.AuthRepository.RefreshToken(req.RefreshToken)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "refresh token failed: %v", err)
 	}

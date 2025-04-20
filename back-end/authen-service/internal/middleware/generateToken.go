@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
 
-func GenerateTokens(userId string, c *gin.Context) (string, error) {
+func GenerateTokens(userId string) (string, http.Cookie, error) {
 	err := godotenv.Load("./internal/.env")
 
 	if err != nil {
@@ -17,7 +16,7 @@ func GenerateTokens(userId string, c *gin.Context) (string, error) {
 
 		if err != nil {
 			fmt.Println("Error loading file .env")
-			return "", err
+			return "", http.Cookie{}, err
 		}
 	}
 
@@ -25,16 +24,14 @@ func GenerateTokens(userId string, c *gin.Context) (string, error) {
 
 	if err != nil {
 		fmt.Println(err)
-		return "", err
+		return "", http.Cookie{}, err
 	}
 
-	cookie, err := RefreshToken(userId, c)
+	cookie, err := RefreshToken(userId)
 
 	if err != nil {
-		return "", err
+		return "", http.Cookie{}, err
 	}
 
-	http.SetCookie(c.Writer, &cookie)
-
-	return accessToken, nil
+	return accessToken, cookie, nil
 }
