@@ -49,7 +49,7 @@ func (pG *PostGrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*post.
 		})
 	}
 
-	return &post.GetPostResp{Posts: protoPosts}, nil
+	return &post.GetPostResp{PostList: protoPosts}, nil
 }
 
 func convertMedia(m []models.PostMedia) []*post.PostMedia {

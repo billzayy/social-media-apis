@@ -23,7 +23,7 @@ message AddPostResp{
 }
 
 message GetPostResp{
-    repeated PostResp Posts = 1;
+    repeated PostResp PostList = 1;
 }
 
 message PostResp {
