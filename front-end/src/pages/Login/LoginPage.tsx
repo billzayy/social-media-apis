@@ -16,7 +16,9 @@ const LoginPage: React.FC = () => {
                     <div className="flex justify-center my-5 mx">
                         <img src={Logo} alt="logo" className="w-[70%]" />
                     </div>
-                    {section != "register" ? <LoginComponent dispatch={useSection} /> : <RegisterComponent dispatch={useSection} />} 
+                    {section != "register" ?
+                        <LoginComponent dispatch={useSection} /> :
+                        <RegisterComponent dispatch={useSection} />} 
                 </div>
             </div>
         </div>

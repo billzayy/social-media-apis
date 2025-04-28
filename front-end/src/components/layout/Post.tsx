@@ -1,4 +1,5 @@
 import CreatePost from "./Post/CreatePost";
+import SuggestPeople from "./Post/PostRight";
 import UserPostList from "./Post/UserPostList";
 
 const Post: React.FC = () => { 
@@ -9,10 +10,7 @@ const Post: React.FC = () => {
                 <UserPostList/>
             </div>
             <div id="right" className={`border border-green-400 w-1/3`}>
-                <div>Content1</div>
-                <div>Content1</div>
-                <div>Content1</div>
-                <div>Content1</div>
+                <SuggestPeople/> 
             </div>
         </div>
     )

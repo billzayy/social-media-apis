@@ -43,7 +43,6 @@ const NavRight: React.FC = () => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-
         </div>        
     )
 }
