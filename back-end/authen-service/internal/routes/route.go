@@ -8,8 +8,8 @@ import (
 func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 	v1 := router.Group("/auth")
 	{
-		v1.POST("/login", h.UserHandler.LoginHandler)
-		v1.POST("/register", h.UserHandler.RegisterHandler)
-		v1.POST("/refresh-token", h.UserHandler.RefreshTokenHandler)
+		v1.POST("/login", h.AuthHandler.LoginHandler)
+		v1.POST("/register", h.AuthHandler.RegisterHandler)
+		v1.POST("/refresh-token", h.AuthHandler.RefreshTokenHandler)
 	}
 }

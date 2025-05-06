@@ -3,19 +3,19 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/billzayy/social-media/back-end/authen-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/models"
+	"github.com/billzayy/social-media/back-end/authen-service/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type AuthHandler struct {
-	AuthRepository *repositories.AuthRepository
+	AuthService *services.AuthService
 }
 
-func NewUserHandler(ur *repositories.AuthRepository) *AuthHandler {
+func NewAuthHandler(us *services.AuthService) *AuthHandler {
 	return &AuthHandler{
-		AuthRepository: ur,
+		AuthService: us,
 	}
 }
 
@@ -27,9 +27,9 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	err := aH.AuthRepository.Register(req)
+	resp, err := aH.AuthService.RegisterService(req)
 
-	if err != nil {
+	if err != nil || !resp {
 		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -41,42 +41,38 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 	userName := c.Query("userName")
 	password := c.Query("password")
 
-	hashed, checkData, err := aH.AuthRepository.CheckUserWithNameAndPass(userName, password)
-
-	if err != nil || !checkData {
-		models.ResponseUser(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
-	res, cookie, err := aH.AuthRepository.Login(userName, hashed)
+	res, cookie, err := aH.AuthService.LoginService(userName, password)
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	http.SetCookie(c.Writer, &cookie) // Set Cookie
+
 	// Return Status OK
 	models.ResponseUser(c, http.StatusOK, res)
-	http.SetCookie(c.Writer, &cookie)
 }
 
 // This function will return a new AccessToken and RefreshToken
 // with requires the client send the old Refresh Token to run this API
 func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 	// Get a Refresh Token
-	getCookie, err := c.Cookie("jwt")
+	getToken, err := c.Cookie("jwt")
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	userId, newToken, cookie, err := aH.AuthRepository.RefreshToken(getCookie)
+	userId, newToken, cookie, err := aH.AuthService.RefreshTokenService(getToken)
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	http.SetCookie(c.Writer, &cookie)
 
 	// Return like LoginHandler
 	models.ResponseUser(c, http.StatusOK, models.UserToken{
@@ -84,6 +80,4 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		Token:  newToken,
 		Type:   "Bearer",
 	})
-
-	http.SetCookie(c.Writer, &cookie)
 }

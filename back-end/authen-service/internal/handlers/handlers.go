@@ -1,13 +1,15 @@
 package handlers
 
-import "github.com/billzayy/social-media/back-end/authen-service/internal/db/repositories"
+import (
+	"github.com/billzayy/social-media/back-end/authen-service/internal/services"
+)
 
 type Handlers struct {
-	UserHandler *AuthHandler
+	AuthHandler *AuthHandler
 }
 
-func NewHandlers(ur *repositories.AuthRepository) *Handlers {
+func NewHandlers(us *services.AuthService) *Handlers {
 	return &Handlers{
-		UserHandler: NewUserHandler(ur),
+		AuthHandler: NewAuthHandler(us),
 	}
 }

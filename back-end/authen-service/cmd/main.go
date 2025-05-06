@@ -13,6 +13,7 @@ import (
 	"github.com/billzayy/social-media/back-end/authen-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/handlers"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/routes"
+	"github.com/billzayy/social-media/back-end/authen-service/internal/services"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -45,7 +46,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	h := handlers.NewHandlers(repositories.NewRepositories(postgres, redis).AuthRepository)
+	h := handlers.NewHandlers(services.NewAuthService((repositories.NewRepositories(postgres, redis).AuthRepository)))
 
 	add := flag.String("mode", "", "Auth Service Mode")
 
@@ -75,8 +76,7 @@ func main() {
 
 	case *add == "deploy":
 		grpcServer := grpc.NewServer()
-		auth.RegisterAuthServiceServer(grpcServer, handlers.NewAuthGrpcServer(repositories.NewAuthRepository(postgres, redis)))
-
+		auth.RegisterAuthServiceServer(grpcServer, handlers.NewAuthGrpcServer(services.NewAuthService(repositories.NewAuthRepository(postgres, redis))))
 		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 
 		if err != nil {

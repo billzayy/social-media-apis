@@ -6,56 +6,28 @@ import (
 	"os"
 
 	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
 )
 
-func VerifyAccessToken(tokenString string) (string, error) {
-	err := godotenv.Load("./internal/.env")
+func VerifyToken(tokenString string, key string) (string, error) {
+	secretKey := []byte(os.Getenv(key)) // Load once at startup ideally
 
-	if err != nil {
-		return "", errors.New("error loading .env file")
-	}
+	claims := &jwt.RegisteredClaims{}
 
-	mySigningKey := []byte(os.Getenv("ACCESS_TOKEN_KEY"))
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the token is signed with HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return mySigningKey, nil
+		return secretKey, nil
 	})
 
 	if err != nil {
 		return "", err
 	}
 
-	return token.Claims.(jwt.MapClaims)["userID"].(string), nil
-}
-
-func VerifyRefreshToken(tokenString string) (string, error) {
-	err := godotenv.Load("./internal/.env")
-
-	if err != nil {
-		err := godotenv.Load("../internal/.env")
-
-		if err != nil {
-			fmt.Println("Error loading file .env")
-			return "", err
-		}
+	if !token.Valid {
+		return "", errors.New("invalid or expired token")
 	}
 
-	mySigningKey := []byte(os.Getenv("REFRESH_TOKEN_KEY"))
-
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return mySigningKey, nil
-	})
-
-	if err != nil {
-		return "", err
-	}
-
-	return token.Claims.(jwt.MapClaims)["userId"].(string), nil
+	return claims.Subject, nil
 }
