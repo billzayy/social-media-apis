@@ -55,13 +55,14 @@ func (as *AuthService) LoginService(userName string, password string) (models.Us
 	hashed, err := as.AuthRepository.GetHashedPassword(userName)
 
 	if err != nil {
+		fmt.Println(hashed)
 		return models.UserToken{}, http.Cookie{}, err
 	}
 
 	valid, err := middleware.ValidatePassword(password, hashed)
 
 	if err != nil {
-		return models.UserToken{}, http.Cookie{}, err
+		return models.UserToken{}, http.Cookie{}, fmt.Errorf("wrong password")
 	}
 
 	if !valid {

@@ -35,7 +35,7 @@ func (aG *AuthGrpcServer) Register(ctx context.Context, req *auth.RegisterReq) (
 	data, err := aG.AuthService.RegisterService(requestData)
 
 	if err != nil || !data {
-		return &auth.RegisterResp{Successful: false, ErrorMessage: err.Error()}, status.Errorf(codes.Internal, "failed to register: %v", err)
+		return &auth.RegisterResp{Successful: false}, status.Errorf(codes.Internal, "failed to register: %v", err)
 	}
 
 	return &auth.RegisterResp{Successful: data}, nil
@@ -44,7 +44,7 @@ func (aG *AuthGrpcServer) Register(ctx context.Context, req *auth.RegisterReq) (
 func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.LoginResp, error) {
 	token, cookie, err := aG.AuthService.LoginService(req.GetUserName(), req.GetPassword())
 	if err != nil {
-		return &auth.LoginResp{ErrorMessage: err.Error()}, status.Errorf(codes.Internal, "login failed: %v", err)
+		return &auth.LoginResp{}, status.Errorf(codes.Internal, "refresh token failed: %v", err)
 	}
 
 	return &auth.LoginResp{

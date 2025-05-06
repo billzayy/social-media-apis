@@ -25,7 +25,6 @@ message RegisterReq {
 
 message RegisterResp {
     bool Successful = 1;
-    string ErrorMessage = 2;
 }
 
 // Login Req & Resp
@@ -39,7 +38,6 @@ message LoginResp{
     string Token = 2;
     string Cookie = 3;
     string Type = 4;
-    string ErrorMessage = 5;
 }
 
 // RefreshToken Req & Resp
@@ -52,5 +50,4 @@ message RefreshTokenResp{
     string Token = 2;
     string Cookie = 3;
     string Type = 4;
-    string ErrorMessage = 5;
 }
