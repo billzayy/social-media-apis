@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 
 	post "github.com/billzayy/social-media/back-end/post-service/api"
 	"github.com/billzayy/social-media/back-end/post-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
+	"github.com/billzayy/social-media/back-end/post-service/internal/utils"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,12 +16,14 @@ import (
 
 type PostGrpcServer struct {
 	post.UnimplementedPostServiceServer
-	PostRepository *repositories.PostRepository
+	PostRepository     *repositories.PostRepository
+	InteractRepository *repositories.InteractRepository
 }
 
-func NewPostGrpcServer(db *repositories.PostRepository) *PostGrpcServer {
+func NewPostGrpcServer(dbPost *repositories.PostRepository, dbInteract *repositories.InteractRepository) *PostGrpcServer {
 	return &PostGrpcServer{
-		PostRepository: db,
+		PostRepository:     dbPost,
+		InteractRepository: dbInteract,
 	}
 }
 
@@ -45,22 +49,11 @@ func (pG *PostGrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*post.
 				ProfilePicture: p.Author.AvatarURL,
 			},
 			// Convert media if needed:
-			Media: convertMedia(p.Media),
+			Media: utils.ConvertMedia(p.Media),
 		})
 	}
 
 	return &post.GetPostResp{PostList: protoPosts}, nil
-}
-
-func convertMedia(m []models.PostMedia) []*post.PostMedia {
-	var mediaList []*post.PostMedia
-	for _, item := range m {
-		mediaList = append(mediaList, &post.PostMedia{
-			Url:  item.Url,
-			Type: item.Type,
-		})
-	}
-	return mediaList
 }
 
 func (pG *PostGrpcServer) AddPost(ctx context.Context, request *post.AddPostReq) (*post.AddPostResp, error) {
@@ -81,10 +74,14 @@ func (pG *PostGrpcServer) AddPost(ctx context.Context, request *post.AddPostReq)
 }
 
 func (pG *PostGrpcServer) DeletePost(ctx context.Context, req *post.DeletePostReq) (*emptypb.Empty, error) {
-	err := pG.PostRepository.DeletePost(req.Id)
+	resp, err := pG.PostRepository.DeletePost(req.Id)
 
 	if err != nil {
 		return &emptypb.Empty{}, err
+	}
+
+	if resp == 0 {
+		return &emptypb.Empty{}, fmt.Errorf("post %s not found", req.Id)
 	}
 
 	return &emptypb.Empty{}, nil

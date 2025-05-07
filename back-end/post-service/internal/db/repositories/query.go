@@ -12,6 +12,7 @@ var GetPostQuery = fmt.Sprintf(`
 		COALESCE(
 			json_agg(
 				json_build_object(
+					'PostId', pm."PostId",
 					'Type', pm."Type",
 					'Url', pm."Url"
 				)

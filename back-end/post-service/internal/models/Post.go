@@ -23,5 +23,5 @@ type PostResp struct {
 type Users struct {
 	UserId    uuid.UUID `json:"ID"`
 	FullName  string    `json:"fullName"`
-	AvatarURL string    `json:"ProfilePicture"`
+	AvatarURL string    `json:"profilePicture"`
 }

@@ -7,11 +7,13 @@ import (
 )
 
 type Repositories struct {
-	PostRepository *PostRepository
+	PostRepository     *PostRepository
+	InteractRepository *InteractRepository
 }
 
 func NewRepositories(db *sql.DB, rdb *redis.Client) *Repositories {
 	return &Repositories{
-		PostRepository: NewPostRepository(db, rdb),
+		PostRepository:     NewPostRepository(db, rdb),
+		InteractRepository: NewInteractRepository(db, rdb),
 	}
 }

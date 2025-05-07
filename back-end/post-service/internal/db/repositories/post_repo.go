@@ -42,9 +42,7 @@ func (pR *PostRepository) AddPost(request models.AddPostRequest) error {
 }
 
 func (pR *PostRepository) GetPost() ([]models.PostResp, error) {
-	query := GetPostQuery
-
-	rows, err := pR.db.Query(query)
+	rows, err := pR.db.Query(GetPostQuery)
 
 	defer rows.Close()
 
@@ -73,12 +71,12 @@ func (pR *PostRepository) GetPost() ([]models.PostResp, error) {
 
 		// Decode user JSON
 		if err := json.Unmarshal(userJSON, &post.Author); err != nil {
-			log.Printf("Error decoding user JSON: %v", err)
+			return []models.PostResp{}, fmt.Errorf("Error decoding user JSON: %v", err)
 		}
 
 		// Decode media JSON
 		if err := json.Unmarshal(mediaJSON, &post.Media); err != nil {
-			log.Printf("Error decoding media JSON: %v", err)
+			return []models.PostResp{}, fmt.Errorf("Error decoding media JSON: %v", err)
 		}
 
 		result = append(result, post)
@@ -87,14 +85,20 @@ func (pR *PostRepository) GetPost() ([]models.PostResp, error) {
 	return result, nil
 }
 
-func (pR *PostRepository) DeletePost(postId string) error {
-	query := fmt.Sprintf(`DELETE FROM public."Posts" WHERE "ID" = '%s'`, postId)
+func (pR *PostRepository) DeletePost(postId string) (int64, error) {
+	query := fmt.Sprintf(`DELETE FROM public."Posts" WHERE "ID" = '%s';`, postId)
 
-	_, err := pR.db.Exec(query)
+	rowResult, err := pR.db.Exec(query)
 
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	resp, err := rowResult.RowsAffected()
+
+	if err != nil {
+		return 0, err
+	}
+
+	return resp, nil
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/billzayy/social-media/back-end/post-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/post-service/internal/handlers"
 	"github.com/billzayy/social-media/back-end/post-service/internal/routes"
+	"github.com/billzayy/social-media/back-end/post-service/internal/services"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
@@ -45,7 +46,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	h := handlers.NewHandlers(repositories.NewRepositories(postgres, redis).PostRepository)
+	h := handlers.NewHandlers(services.NewServices(repositories.NewRepositories(postgres, redis).PostRepository))
 
 	add := flag.String("mode", "", "Post Service Mode")
 
@@ -75,7 +76,10 @@ func main() {
 
 	case *add == "deploy":
 		grpcServer := grpc.NewServer()
-		post.RegisterPostServiceServer(grpcServer, handlers.NewPostGrpcServer(repositories.NewPostRepository(postgres, redis)))
+		post.RegisterPostServiceServer(grpcServer, handlers.NewPostGrpcServer(
+			repositories.NewPostRepository(postgres, redis),
+			repositories.NewInteractRepository(postgres, redis),
+		))
 
 		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 

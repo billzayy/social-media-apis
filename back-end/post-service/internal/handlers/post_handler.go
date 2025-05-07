@@ -3,22 +3,22 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/billzayy/social-media/back-end/post-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
+	"github.com/billzayy/social-media/back-end/post-service/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
 type PostHandler struct {
-	PostRepository *repositories.PostRepository
+	PostService *services.PostService
 }
 
-func NewPostHandler(ur *repositories.PostRepository) *PostHandler {
+func NewPostHandler(ur *services.PostService) *PostHandler {
 	return &PostHandler{
-		PostRepository: ur,
+		PostService: ur,
 	}
 }
 
-func (pH *PostHandler) AddPostHandler(c *gin.Context) {
+func (pH *PostHandler) CreatePostHandler(c *gin.Context) {
 	var req models.AddPostRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -26,10 +26,20 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 		return
 	}
 
-	err := pH.PostRepository.AddPost(req)
+	if req.Content == "" {
+		models.ResponsePost(c, http.StatusBadRequest, "Content can not be empty!")
+		return
+	}
 
-	if err != nil {
-		models.ResponsePost(c, http.StatusInternalServerError, err)
+	valid, err := pH.PostService.CreatePost(req)
+
+	if err != nil && err.Error() != "content can not empty" {
+		models.ResponsePost(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if valid == false {
+		models.ResponsePost(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -37,7 +47,7 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 }
 
 func (pH *PostHandler) GetPostHandler(c *gin.Context) {
-	resp, err := pH.PostRepository.GetPost()
+	resp, err := pH.PostService.GetPost()
 
 	if err != nil {
 		models.ResponsePost(c, http.StatusInternalServerError, err)
@@ -50,7 +60,7 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 func (pH *PostHandler) DeletePostHandler(c *gin.Context) {
 	postId := c.Query("id")
 
-	err := pH.PostRepository.DeletePost(postId)
+	err := pH.PostService.DeletePost(postId)
 
 	if err != nil {
 		models.ResponsePost(c, http.StatusInternalServerError, err)
