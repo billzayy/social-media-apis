@@ -6,10 +6,18 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
-	v1 := router.Group("/api/v1/post")
+	postV1 := router.Group("/api/v1/post")
 	{
-		v1.GET("/get-post", h.PostHandler.GetPostHandler)
-		v1.POST("/add-post", h.PostHandler.CreatePostHandler)
-		v1.DELETE("/delete-post", h.PostHandler.DeletePostHandler)
+		postV1.GET("/get-post", h.PostHandler.GetPostHandler)
+		postV1.POST("/add-post", h.PostHandler.CreatePostHandler)
+		postV1.DELETE("/delete-post", h.PostHandler.DeletePostHandler)
+	}
+
+	interactV1 := router.Group("/api/v1/interact")
+	{
+		interactV1.POST("/add-like", h.InteractHandler.LikeHandler)
+		interactV1.POST("/add-comment", h.InteractHandler.AddCommentHandler)
+		interactV1.DELETE("/delete-like", h.InteractHandler.RemoveLikeHandler)
+		interactV1.DELETE("/delete-comment", h.InteractHandler.DeleteCommentHandler)
 	}
 }

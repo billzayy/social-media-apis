@@ -10,7 +10,7 @@ type ResponseDataType struct {
 	Message    string `json:"message"`
 }
 
-func ResponsePost(c *gin.Context, httpCode int, data any) {
+func Response(c *gin.Context, httpCode int, data any) {
 	if httpCode >= 200 && httpCode <= 299 {
 		c.JSON(httpCode, ResponseDataType{
 			StatusCode: httpCode,

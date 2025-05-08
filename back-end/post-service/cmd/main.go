@@ -46,7 +46,10 @@ func main() {
 		fmt.Println(err)
 	}
 
-	h := handlers.NewHandlers(services.NewServices(repositories.NewRepositories(postgres, redis).PostRepository))
+	h := handlers.NewHandlers(services.NewServices(
+		repositories.NewRepositories(postgres, redis).PostRepository,
+		repositories.NewRepositories(postgres, redis).InteractRepository,
+	))
 
 	add := flag.String("mode", "", "Post Service Mode")
 

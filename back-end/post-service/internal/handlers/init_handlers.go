@@ -5,11 +5,13 @@ import (
 )
 
 type Handlers struct {
-	PostHandler *PostHandler
+	PostHandler     *PostHandler
+	InteractHandler *InteractHandler
 }
 
 func NewHandlers(sv *services.Services) *Handlers {
 	return &Handlers{
-		PostHandler: NewPostHandler(sv.PostService),
+		PostHandler:     NewPostHandler(sv.PostService),
+		InteractHandler: NewInteractHandler(sv.InteractService),
 	}
 }
