@@ -11,6 +11,10 @@ import (
 )
 
 type InteractRepositoryInterface interface {
+	AddLike(userId uuid.UUID, postId uuid.UUID) error
+	DeleteLike(userId uuid.UUID, postId uuid.UUID) (int64, error)
+	AddComment(reqComm models.CommentRequest) error
+	DeleteComment(id uuid.UUID) (int64, error)
 }
 
 type InteractRepository struct {
@@ -25,7 +29,28 @@ func NewInteractRepository(db *sql.DB, rdb *redis.Client) *InteractRepository {
 	}
 }
 
-func (iR *InteractRepository) AddLike(userId string, postId string) error {
+func (iR *InteractRepository) GetLikeOnPost(userId uuid.UUID, postId uuid.UUID) (int, error) {
+	query := `SELECT COUNT(*) FROM public."PostLikes" WHERE "UserId" = $1 AND "PostId" = $2;`
+
+	rows, err := iR.db.Query(query, userId, postId)
+
+	if err != nil {
+		return 0, err
+	}
+
+	var count int
+	for rows.Next() {
+		err := rows.Scan(&count)
+
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return count, nil
+}
+
+func (iR *InteractRepository) AddLike(userId uuid.UUID, postId uuid.UUID) error {
 	query := `INSERT INTO public."PostLikes" ("UserId", "PostId", "DateLike") VALUES ($1, $2, $3)`
 	_, err := iR.db.Exec(query, userId, postId, time.Now().UTC())
 
@@ -66,7 +91,7 @@ func (iR *InteractRepository) AddComment(reqComm models.CommentRequest) error {
 	return nil
 }
 
-func (iR *InteractRepository) DeleteComment(id string) (int64, error) {
+func (iR *InteractRepository) DeleteComment(id uuid.UUID) (int64, error) {
 	query := fmt.Sprintf(`DELETE FROM public."PostComments" WHERE "ID" = '%s'`, id)
 
 	affected, err := iR.db.Exec(query)

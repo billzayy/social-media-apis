@@ -18,7 +18,21 @@ func NewInteractService(ir *repositories.InteractRepository) *InteractService {
 	}
 }
 
-func (iS *InteractService) LikeService(userId string, postId string) error {
+func (iS *InteractService) CheckLikeOnPostService(userId uuid.UUID, postId uuid.UUID) (bool, error) {
+	data, err := iS.InteractRepository.GetLikeOnPost(userId, postId)
+
+	if err != nil {
+		return false, err
+	}
+
+	if data == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+func (iS *InteractService) AddLikeService(userId uuid.UUID, postId uuid.UUID) error {
 	err := iS.InteractRepository.AddLike(userId, postId)
 
 	if err != nil {
@@ -42,7 +56,7 @@ func (iS *InteractService) RemoveLikeService(userId uuid.UUID, postId uuid.UUID)
 	return nil
 }
 
-func (iS *InteractService) CommentService(reqComm models.CommentRequest) error {
+func (iS *InteractService) AddCommentService(reqComm models.CommentRequest) error {
 	err := iS.InteractRepository.AddComment(reqComm)
 
 	if err != nil {
@@ -52,7 +66,7 @@ func (iS *InteractService) CommentService(reqComm models.CommentRequest) error {
 	return nil
 }
 
-func (iS *InteractService) DeleteCommentService(id string) error {
+func (iS *InteractService) DeleteCommentService(id uuid.UUID) error {
 	rows, err := iS.InteractRepository.DeleteComment(id)
 
 	if err != nil {

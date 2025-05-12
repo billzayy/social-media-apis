@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_AddPost_FullMethodName    = "/proto.PostService/AddPost"
+	PostService_CreatePost_FullMethodName = "/proto.PostService/CreatePost"
 	PostService_GetPost_FullMethodName    = "/proto.PostService/GetPost"
 	PostService_DeletePost_FullMethodName = "/proto.PostService/DeletePost"
 )
@@ -29,7 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostServiceClient interface {
-	AddPost(ctx context.Context, in *AddPostReq, opts ...grpc.CallOption) (*AddPostResp, error)
+	CreatePost(ctx context.Context, in *CreatePostReq, opts ...grpc.CallOption) (*CreatePostResp, error)
 	GetPost(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPostResp, error)
 	DeletePost(ctx context.Context, in *DeletePostReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -42,10 +42,10 @@ func NewPostServiceClient(cc grpc.ClientConnInterface) PostServiceClient {
 	return &postServiceClient{cc}
 }
 
-func (c *postServiceClient) AddPost(ctx context.Context, in *AddPostReq, opts ...grpc.CallOption) (*AddPostResp, error) {
+func (c *postServiceClient) CreatePost(ctx context.Context, in *CreatePostReq, opts ...grpc.CallOption) (*CreatePostResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(AddPostResp)
-	err := c.cc.Invoke(ctx, PostService_AddPost_FullMethodName, in, out, cOpts...)
+	out := new(CreatePostResp)
+	err := c.cc.Invoke(ctx, PostService_CreatePost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (c *postServiceClient) DeletePost(ctx context.Context, in *DeletePostReq, o
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
 type PostServiceServer interface {
-	AddPost(context.Context, *AddPostReq) (*AddPostResp, error)
+	CreatePost(context.Context, *CreatePostReq) (*CreatePostResp, error)
 	GetPost(context.Context, *emptypb.Empty) (*GetPostResp, error)
 	DeletePost(context.Context, *DeletePostReq) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPostServiceServer()
@@ -89,8 +89,8 @@ type PostServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedPostServiceServer struct{}
 
-func (UnimplementedPostServiceServer) AddPost(context.Context, *AddPostReq) (*AddPostResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddPost not implemented")
+func (UnimplementedPostServiceServer) CreatePost(context.Context, *CreatePostReq) (*CreatePostResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePost not implemented")
 }
 func (UnimplementedPostServiceServer) GetPost(context.Context, *emptypb.Empty) (*GetPostResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPost not implemented")
@@ -119,20 +119,20 @@ func RegisterPostServiceServer(s grpc.ServiceRegistrar, srv PostServiceServer) {
 	s.RegisterService(&PostService_ServiceDesc, srv)
 }
 
-func _PostService_AddPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddPostReq)
+func _PostService_CreatePost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePostReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostServiceServer).AddPost(ctx, in)
+		return srv.(PostServiceServer).CreatePost(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: PostService_AddPost_FullMethodName,
+		FullMethod: PostService_CreatePost_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).AddPost(ctx, req.(*AddPostReq))
+		return srv.(PostServiceServer).CreatePost(ctx, req.(*CreatePostReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -181,8 +181,8 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PostServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "AddPost",
-			Handler:    _PostService_AddPost_Handler,
+			MethodName: "CreatePost",
+			Handler:    _PostService_CreatePost_Handler,
 		},
 		{
 			MethodName: "GetPost",

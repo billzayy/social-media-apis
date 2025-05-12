@@ -27,7 +27,7 @@ func main() {
 
 	if err != nil {
 		if err := godotenv.Load("../internal/.env"); err != nil {
-			log.Fatalf("Error loading .env on Postgres")
+			log.Fatalf("Error loading .env")
 		}
 	}
 
@@ -79,9 +79,12 @@ func main() {
 
 	case *add == "deploy":
 		grpcServer := grpc.NewServer()
+
 		post.RegisterPostServiceServer(grpcServer, handlers.NewPostGrpcServer(
-			repositories.NewPostRepository(postgres, redis),
-			repositories.NewInteractRepository(postgres, redis),
+			services.NewServices(
+				repositories.NewPostRepository(postgres, redis),
+				repositories.NewInteractRepository(postgres, redis),
+			),
 		))
 
 		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))

@@ -2,11 +2,10 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 
 	post "github.com/billzayy/social-media/back-end/post-service/api"
-	"github.com/billzayy/social-media/back-end/post-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
+	"github.com/billzayy/social-media/back-end/post-service/internal/services"
 	"github.com/billzayy/social-media/back-end/post-service/internal/utils"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
@@ -16,19 +15,19 @@ import (
 
 type PostGrpcServer struct {
 	post.UnimplementedPostServiceServer
-	PostRepository     *repositories.PostRepository
-	InteractRepository *repositories.InteractRepository
+	PostService     *services.PostService
+	InteractService *services.InteractService
 }
 
-func NewPostGrpcServer(dbPost *repositories.PostRepository, dbInteract *repositories.InteractRepository) *PostGrpcServer {
+func NewPostGrpcServer(sv *services.Services) *PostGrpcServer {
 	return &PostGrpcServer{
-		PostRepository:     dbPost,
-		InteractRepository: dbInteract,
+		PostService:     sv.PostService,
+		InteractService: sv.InteractService,
 	}
 }
 
 func (pG *PostGrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*post.GetPostResp, error) {
-	posts, err := pG.PostRepository.GetPost()
+	posts, err := pG.PostService.GetPost()
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to Get post : %v", err)
@@ -56,7 +55,7 @@ func (pG *PostGrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*post.
 	return &post.GetPostResp{PostList: protoPosts}, nil
 }
 
-func (pG *PostGrpcServer) AddPost(ctx context.Context, request *post.AddPostReq) (*post.AddPostResp, error) {
+func (pG *PostGrpcServer) CreatePost(ctx context.Context, request *post.CreatePostReq) (*post.CreatePostResp, error) {
 
 	r := models.AddPostRequest{
 		UserId:    uuid.MustParse(request.UserId),
@@ -64,24 +63,24 @@ func (pG *PostGrpcServer) AddPost(ctx context.Context, request *post.AddPostReq)
 		CreatedAt: request.CreatedAt,
 	}
 
-	err := pG.PostRepository.AddPost(r)
+	valid, err := pG.PostService.CreatePost(r)
 
 	if err != nil {
-		return &post.AddPostResp{Message: "Create Failed !"}, err
+		return &post.CreatePostResp{Message: "Create Failed !"}, err
 	}
 
-	return &post.AddPostResp{Message: "Post Created !"}, nil
+	if valid == false {
+		return &post.CreatePostResp{Message: "Create Failed"}, err
+	}
+
+	return &post.CreatePostResp{Message: "Post Created !"}, nil
 }
 
 func (pG *PostGrpcServer) DeletePost(ctx context.Context, req *post.DeletePostReq) (*emptypb.Empty, error) {
-	resp, err := pG.PostRepository.DeletePost(req.Id)
+	err := pG.PostService.DeletePost(req.Id)
 
 	if err != nil {
 		return &emptypb.Empty{}, err
-	}
-
-	if resp == 0 {
-		return &emptypb.Empty{}, fmt.Errorf("post %s not found", req.Id)
 	}
 
 	return &emptypb.Empty{}, nil

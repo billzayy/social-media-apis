@@ -15,7 +15,8 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 
 	interactV1 := router.Group("/api/v1/interact")
 	{
-		interactV1.POST("/add-like", h.InteractHandler.LikeHandler)
+		interactV1.POST("/check-like", h.InteractHandler.CheckLikeHandler)
+		interactV1.POST("/add-like", h.InteractHandler.AddLikeHandler)
 		interactV1.POST("/add-comment", h.InteractHandler.AddCommentHandler)
 		interactV1.DELETE("/delete-like", h.InteractHandler.RemoveLikeHandler)
 		interactV1.DELETE("/delete-comment", h.InteractHandler.DeleteCommentHandler)

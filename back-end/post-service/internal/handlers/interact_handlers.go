@@ -6,6 +6,7 @@ import (
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
 	"github.com/billzayy/social-media/back-end/post-service/internal/services"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type InteractHandler struct {
@@ -18,7 +19,30 @@ func NewInteractHandler(iS *services.InteractService) *InteractHandler {
 	}
 }
 
-func (iH *InteractHandler) LikeHandler(c *gin.Context) {
+func (iH *InteractHandler) CheckLikeHandler(c *gin.Context) {
+	var req models.LikeRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		models.Response(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data, err := iH.InteractService.CheckLikeOnPostService(req.UserId, req.PostId)
+
+	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if data == false {
+		models.Response(c, http.StatusNotFound, "not found")
+		return
+	}
+
+	models.Response(c, http.StatusOK, true)
+}
+
+func (iH *InteractHandler) AddLikeHandler(c *gin.Context) {
 	var req models.LikeRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -26,7 +50,7 @@ func (iH *InteractHandler) LikeHandler(c *gin.Context) {
 		return
 	}
 
-	err := iH.InteractService.LikeService(req.UserId.String(), req.PostId.String())
+	err := iH.InteractService.AddLikeService(req.UserId, req.PostId)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err.Error())
@@ -62,7 +86,7 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 		return
 	}
 
-	err := iH.InteractService.CommentService(req)
+	err := iH.InteractService.AddCommentService(req)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err.Error())
@@ -79,7 +103,7 @@ func (iH *InteractHandler) DeleteCommentHandler(c *gin.Context) {
 		return
 	}
 
-	err := iH.InteractService.DeleteCommentService(id)
+	err := iH.InteractService.DeleteCommentService(uuid.MustParse(id))
 
 	if err != nil && err.Error() == "not found" {
 		models.Response(c, http.StatusNotFound, "Not found comment")

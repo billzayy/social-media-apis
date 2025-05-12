@@ -7,21 +7,30 @@ option go_package = "github.com/billzayy/social-media/back-end/post-service/api"
 import "google/protobuf/empty.proto";
 
 service PostService{
-    rpc AddPost(AddPostReq) returns (AddPostResp);
+    // Post Functions
+    rpc CreatePost(CreatePostReq) returns (CreatePostResp);
     rpc GetPost(google.protobuf.Empty) returns (GetPostResp);
     rpc DeletePost(DeletePostReq) returns (google.protobuf.Empty);
+
+    // Like Interact Functions
+    rpc CheckLike(LikeRequest) returns(CheckLikeResp);
+    rpc AddLike(LikeRequest) returns(google.protobuf.Empty);
+    rpc RemoveLike(LikeRequest) returns(google.protobuf.Empty);
+
+    // Comment Interact Functions
+    rpc AddComment()
 }
 
-message AddPostReq{
+message CreatePostReq{
     string UserId = 1;
     string Content = 2;
     string CreatedAt = 3;
 }
 
-message AddPostResp{
+message CreatePostResp{
     string Message = 1; 
 }
-
+ 
 message GetPostResp{
     repeated PostResp PostList = 1;
 }
@@ -51,4 +60,23 @@ message PostMedia{
     string PostId = 1;
     string Type = 2;
     string Url = 3;
+}
+
+message LikeRequest{
+    string UserId = 1;
+    string PostId = 2;
+}
+
+message CheckLikeResp{
+    bool valid = 1;
+}
+
+message AddCommentReq{
+    string UserId = 1;
+    string PostId = 2;
+    string Comment = 3;
+}
+
+message DeleteCommentReq{
+    string Id = 1;
 }

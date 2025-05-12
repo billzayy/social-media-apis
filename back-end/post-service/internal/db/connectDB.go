@@ -3,21 +3,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func ConnectDB() (*sql.DB, error) {
-	err := godotenv.Load("./.env")
-
-	if err != nil {
-		if err := godotenv.Load("./internal/.env"); err != nil {
-			log.Fatalf("Error loading .env on Postgres")
-		}
-	}
-
 	// Connection string
 	USERNAME := os.Getenv("POSTGRES_USERNAME")
 	PASSWORD := os.Getenv("POSTGRES_PASSWORD")
