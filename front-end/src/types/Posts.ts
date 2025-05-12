@@ -1,3 +1,5 @@
+import { Users } from "./Users"
+
 export interface Post { 
     ID: string,
     UserId: string,
@@ -26,11 +28,12 @@ export interface PostMedia {
 }
 
 export interface PostReq { 
-    // id: string,
-    avatar: string,
+    id: string,
+    user: Users,
     content: string,
     createdAt: string,
     likes: number,
     comments: number,
+    shares: number,
     media?: PostMedia[]
 }

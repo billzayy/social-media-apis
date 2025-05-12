@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 const UserPostList: React.FC = () => {
-    const [postData, setPostData] = useState<ResponseAPI>()
+    const [postData, setPostData] = useState<ResponseAPI | undefined>()
 
     useEffect(() => {
         let isCancelled = false;
-        async function fetchData() {
+        async function fetchPostData() {
             const resp = await GetPostAxios();
 
             if (!isCancelled) {
@@ -23,7 +23,8 @@ const UserPostList: React.FC = () => {
             }
         }
 
-        fetchData();
+
+        fetchPostData();
         return () => {
             isCancelled = true;
         };
@@ -32,18 +33,21 @@ const UserPostList: React.FC = () => {
     
     return (
         <div>
-            {postData != undefined ? postData?.data.Posts.map((data: any) => (
-                <div className="" key={data.PostId}>
+            {postData != undefined ? postData.data.map((v: any) => (
+                <div
+                    className="" key={v.postId}>
                     <UserPost
-                        avatar={data.Author.ProfilePicture}
-                        content={data.Content}
-                        createdAt={data.CreatedAt}
-                        likes={data.Likes == undefined ? 0 : data.Likes}
-                        comments={data.Comments == undefined? 0: data.Comments}
-                        media={data.Media == undefined? undefined : data.Media}
+                        id={v.postId}
+                        user={v.userId}
+                        content={v.content}
+                        createdAt={v.createdAt}
+                        likes={v.likes == undefined ? 0 : v.likes}
+                        comments={v.comments == undefined ? 0 : v.comments}
+                        shares={v.shares == undefined ? 0 : v.shares}
+                        media={v.media == undefined? undefined : v.media}
                     />
                 </div>
-            )) : <div>Hello</div>}
+            )) : <div className="mt-10">Loading ...</div>}
         </div>
     )
 }

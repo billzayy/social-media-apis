@@ -53,3 +53,82 @@ export const GetPostAxios = async (): Promise<ResponseAPI> => {
         return {statusCode: 404, data: err, message: "Failure"}
     }
 }
+
+export const CheckLikes = async (userId: string, postId: string): Promise<ResponseAPI> => { 
+    try {
+        const response = await axios.post(`${url}/api/v1/interact/check-like`, 
+            {
+                UserId: userId,
+                PostId: postId
+            }, 
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const resp: ResponseAPI = { 
+            statusCode: response.data.statusCode,
+            data: response.data.data,
+            message: response.data.message
+        }
+
+        return resp
+    } catch (err) {
+        console.log("Error get post in:", err);
+        return {statusCode: 404, data: err, message: "Failure"} 
+    } 
+} 
+
+export const AddLikes = async (userId:string, postId: string): Promise<ResponseAPI> => { 
+    try {
+        const response = await axios.post(`${url}/api/v1/interact/add-like`, 
+            {
+                UserId: userId,
+                PostId: postId
+            }, 
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const resp: ResponseAPI = { 
+            statusCode: response.data.statusCode,
+            data: response.data.data,
+            message: response.data.message
+        }
+
+        return resp
+    } catch (err) {
+        console.log("Error get post in:", err);
+        return {statusCode: 404, data: err, message: "Failure"} 
+    }
+}
+
+export const RemoveLikes = async (userId: string, postId: string): Promise<ResponseAPI> => { 
+    try {
+        const response = await axios.delete(`${url}/api/v1/interact/delete-like`, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: {
+                userId: userId,
+                postId: postId
+            }
+        });
+
+        const resp: ResponseAPI = { 
+            statusCode: response.data.statusCode,
+            data: response.data.data,
+            message: response.data.message
+        };
+
+        return resp;
+    } catch (err) {
+        console.log("Error in RemoveLikes:", err);
+        return { statusCode: 404, data: err, message: "Failure" }; 
+    }
+};
