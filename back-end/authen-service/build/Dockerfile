@@ -20,7 +20,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o post-service ./cmd/main.go
+RUN go build -o authen-service ./cmd/main.go
 
 # Final stage
 FROM alpine:latest
@@ -32,7 +32,7 @@ WORKDIR /root/
 RUN apk --no-cache add ca-certificates
 
 # Copy built binary from builder
-COPY --from=builder /app/post-service .
+COPY --from=builder /app/authen-service .
 
 # Copy .env file
 COPY ./internal/.env ./internal/.env
@@ -40,4 +40,4 @@ COPY ./internal/.env ./internal/.env
 EXPOSE $GRPC_PORT
 
 # Run the app
-CMD ["./post-service", "-mode=deploy"]
+CMD ["./authen-service", "-mode=deploy"]

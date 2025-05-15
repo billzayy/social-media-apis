@@ -1,8 +1,7 @@
 # Variables
-DOCKER_GO_IMAGE_NAME=social-media/post-service
+DOCKER_GO_IMAGE_NAME=coderbillzay/social-post-service
 DOCKERFILE_GO_PATH=./build/Dockerfile
 DOCKER_CONTEXT=.
-DOCKER_COMPOSE_FILE=../build/docker-compose.yml
 
 # Build command will run as clone
 .PHONY: build
@@ -10,9 +9,9 @@ DOCKER_COMPOSE_FILE=../build/docker-compose.yml
 # Default target
 all: allow generate build
 
+docker: build push
+
 install:
-	npm install -g grpc-tools
-	cd ../ && npm install
 	go mod download
 
 allow:
@@ -27,6 +26,11 @@ generate:
 build:
 	@echo "Building Docker Go image $(DOCKER_GO_IMAGE_NAME)..."
 	docker build -t $(DOCKER_GO_IMAGE_NAME) -f $(DOCKERFILE_GO_PATH) $(DOCKER_CONTEXT)
+
+# Push image into DockerHub 
+push: 
+	@echo "Pushing into DockerHub ..."
+	docker push $(DOCKER_GO_IMAGE_NAME)
 
 # Clean cache and remove image
 clean:
