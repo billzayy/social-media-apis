@@ -33,19 +33,19 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	resp, err := client.GetPost(ctx, &emptypb.Empty{})
 	if err != nil {
 		fmt.Println(err)
-		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// fmt.Println(resp)
-	models.ResponseUser(c, http.StatusOK, resp)
+	models.Response(c, http.StatusOK, resp)
 }
 
 func (pH *PostHandler) AddPostHandler(c *gin.Context) {
@@ -58,18 +58,45 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err)
-		models.ResponseUser(c, http.StatusInternalServerError, err)
+		models.Response(c, http.StatusInternalServerError, err)
 		return
 	}
 
-	var req api.AddPostReq
+	var req api.CreatePostReq
 
 	if err = c.ShouldBindJSON(&req); err != nil {
-		models.ResponseUser(c, http.StatusBadRequest, err)
+		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
-	resp, err := client.AddPost(ctx, &req)
+	resp, err := client.CreatePost(ctx, &req)
 
-	models.ResponseUser(c, http.StatusOK, resp)
+	models.Response(c, http.StatusOK, resp)
+}
+
+func (pH *PostHandler) DeletePostHandler(c *gin.Context) {
+	server, client, err := repository.PostRepo(pH.port)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+
+	defer cancel()
+	defer server.Close()
+
+	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	req := &api.DeletePostReq{
+		Id: c.Query("id"),
+	}
+
+	_, err = client.DeletePost(ctx, req)
+
+	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	models.Response(c, http.StatusOK, "Delete Success")
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -35,7 +34,7 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 	defer server.Close()
 
 	if err != nil {
-		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -45,7 +44,7 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 	}) // Call Login function from GRPC
 
 	if err != nil {
-		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -59,7 +58,7 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 	})
 
 	// fmt.Println(resp)
-	models.ResponseUser(c, http.StatusOK, map[string]string{
+	models.Response(c, http.StatusOK, map[string]string{
 		"UserId": resp.UserId,
 		"Token":  resp.Token,
 		"Type":   resp.Type,
@@ -70,7 +69,8 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 	server, client, err := repository.AuthRepo(aH.port)
 
 	if err != nil {
-		log.Fatalf("%v", err)
+		models.Response(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	defer server.Close()
@@ -81,7 +81,7 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 	var req pb.RegisterReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		models.ResponseUser(c, http.StatusBadRequest, err)
+		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -99,38 +99,41 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 
 	if err != nil || !resp.Successful {
 		fmt.Println(err)
-		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	models.ResponseUser(c, http.StatusCreated, "Account Created!")
+	models.Response(c, http.StatusCreated, "Account Created!")
 }
 
 func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 	server, client, err := repository.AuthRepo(aH.port)
 
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 
 	defer server.Close()
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
+
+	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err)
+		return
+	}
 
 	var req *pb.RefreshTokenReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		models.ResponseUser(c, http.StatusBadRequest, err)
+		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
 	resp, err := client.RefreshToken(ctx, req)
 
 	if err != nil {
-
+		models.Response(c, http.StatusInternalServerError, err)
+		return
 	}
-	models.ResponseUser(c, http.StatusOK, map[string]string{
+
+	models.Response(c, http.StatusOK, map[string]string{
 		"UserId": resp.UserId,
 		"Token":  resp.Token,
 		"Type":   resp.Type,

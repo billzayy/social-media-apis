@@ -10,11 +10,22 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 	{
 		authV1.POST("/login", h.AuthHandler.LoginHandler)
 		authV1.POST("/register", h.AuthHandler.RegisterHandler)
+		authV1.POST("/refresh-token", h.AuthHandler.RefreshTokenHandler)
 	}
 
 	postV1 := router.Group("/api/v1/post")
 	{
 		postV1.GET("/get-post", h.PostHandler.GetPostHandler)
 		postV1.POST("/add-post", h.PostHandler.AddPostHandler)
+		postV1.DELETE("/delete-post", h.PostHandler.DeletePostHandler)
+	}
+
+	interact := router.Group("/api/v1/interact")
+	{
+		interact.POST("/check-like", h.InteractHandler.CheckLikeHandler)
+		interact.POST("/add-like", h.InteractHandler.AddLikeHandler)
+		interact.POST("/add-comment", h.InteractHandler.AddCommentHandler)
+		interact.DELETE("/delete-like", h.InteractHandler.RemoveLikeHandler)
+		interact.DELETE("/delete-comment", h.InteractHandler.DeleteCommentHandler)
 	}
 }
