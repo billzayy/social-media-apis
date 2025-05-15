@@ -20,18 +20,31 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PostService_CreatePost_FullMethodName = "/proto.PostService/CreatePost"
-	PostService_GetPost_FullMethodName    = "/proto.PostService/GetPost"
-	PostService_DeletePost_FullMethodName = "/proto.PostService/DeletePost"
+	PostService_CreatePost_FullMethodName    = "/proto.PostService/CreatePost"
+	PostService_GetPost_FullMethodName       = "/proto.PostService/GetPost"
+	PostService_DeletePost_FullMethodName    = "/proto.PostService/DeletePost"
+	PostService_CheckLike_FullMethodName     = "/proto.PostService/CheckLike"
+	PostService_AddLike_FullMethodName       = "/proto.PostService/AddLike"
+	PostService_RemoveLike_FullMethodName    = "/proto.PostService/RemoveLike"
+	PostService_AddComment_FullMethodName    = "/proto.PostService/AddComment"
+	PostService_DeleteComment_FullMethodName = "/proto.PostService/DeleteComment"
 )
 
 // PostServiceClient is the client API for PostService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostServiceClient interface {
+	// Post Functions
 	CreatePost(ctx context.Context, in *CreatePostReq, opts ...grpc.CallOption) (*CreatePostResp, error)
 	GetPost(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetPostResp, error)
 	DeletePost(ctx context.Context, in *DeletePostReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Like Interact Functions
+	CheckLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*CheckLikeResp, error)
+	AddLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RemoveLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// Comment Interact Functions
+	AddComment(ctx context.Context, in *AddCommentReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type postServiceClient struct {
@@ -72,13 +85,71 @@ func (c *postServiceClient) DeletePost(ctx context.Context, in *DeletePostReq, o
 	return out, nil
 }
 
+func (c *postServiceClient) CheckLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*CheckLikeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckLikeResp)
+	err := c.cc.Invoke(ctx, PostService_CheckLike_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) AddLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PostService_AddLike_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) RemoveLike(ctx context.Context, in *LikeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PostService_RemoveLike_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) AddComment(ctx context.Context, in *AddCommentReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PostService_AddComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, PostService_DeleteComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility.
 type PostServiceServer interface {
+	// Post Functions
 	CreatePost(context.Context, *CreatePostReq) (*CreatePostResp, error)
 	GetPost(context.Context, *emptypb.Empty) (*GetPostResp, error)
 	DeletePost(context.Context, *DeletePostReq) (*emptypb.Empty, error)
+	// Like Interact Functions
+	CheckLike(context.Context, *LikeRequest) (*CheckLikeResp, error)
+	AddLike(context.Context, *LikeRequest) (*emptypb.Empty, error)
+	RemoveLike(context.Context, *LikeRequest) (*emptypb.Empty, error)
+	// Comment Interact Functions
+	AddComment(context.Context, *AddCommentReq) (*emptypb.Empty, error)
+	DeleteComment(context.Context, *DeleteCommentReq) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -97,6 +168,21 @@ func (UnimplementedPostServiceServer) GetPost(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedPostServiceServer) DeletePost(context.Context, *DeletePostReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePost not implemented")
+}
+func (UnimplementedPostServiceServer) CheckLike(context.Context, *LikeRequest) (*CheckLikeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckLike not implemented")
+}
+func (UnimplementedPostServiceServer) AddLike(context.Context, *LikeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddLike not implemented")
+}
+func (UnimplementedPostServiceServer) RemoveLike(context.Context, *LikeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveLike not implemented")
+}
+func (UnimplementedPostServiceServer) AddComment(context.Context, *AddCommentReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddComment not implemented")
+}
+func (UnimplementedPostServiceServer) DeleteComment(context.Context, *DeleteCommentReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 func (UnimplementedPostServiceServer) testEmbeddedByValue()                     {}
@@ -173,6 +259,96 @@ func _PostService_DeletePost_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_CheckLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).CheckLike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_CheckLike_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).CheckLike(ctx, req.(*LikeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_AddLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).AddLike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_AddLike_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).AddLike(ctx, req.(*LikeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_RemoveLike_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LikeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).RemoveLike(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_RemoveLike_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).RemoveLike(ctx, req.(*LikeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_AddComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).AddComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_AddComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).AddComment(ctx, req.(*AddCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).DeleteComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PostService_DeleteComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).DeleteComment(ctx, req.(*DeleteCommentReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -191,6 +367,26 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePost",
 			Handler:    _PostService_DeletePost_Handler,
+		},
+		{
+			MethodName: "CheckLike",
+			Handler:    _PostService_CheckLike_Handler,
+		},
+		{
+			MethodName: "AddLike",
+			Handler:    _PostService_AddLike_Handler,
+		},
+		{
+			MethodName: "RemoveLike",
+			Handler:    _PostService_RemoveLike_Handler,
+		},
+		{
+			MethodName: "AddComment",
+			Handler:    _PostService_AddComment_Handler,
+		},
+		{
+			MethodName: "DeleteComment",
+			Handler:    _PostService_DeleteComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
