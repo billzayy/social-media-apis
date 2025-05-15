@@ -24,8 +24,8 @@ func main() {
 	r := gin.New()
 
 	h := handlers.NewHandlers(&handlers.PortList{
-		AuthPort: os.Getenv("AUTH_GRPC"),
-		PostPort: os.Getenv("POST_GRPC"),
+		AuthPort: os.Getenv("AUTH_PORT"),
+		PostPort: os.Getenv("POST_PORT"),
 	})
 
 	r.Use(cors.New(cors.Config{

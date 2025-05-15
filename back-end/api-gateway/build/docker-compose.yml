@@ -1,0 +1,12 @@
+services:  
+  authen-service:
+    image: coderbillzay/social-authen-service
+    container_name: authen-service
+    ports:
+      - "${AUTH_PORT}:${AUTH_GRPC}"
+
+  post-server:    
+    image: coderbillzay/social-post-service
+    container_name: post-service
+    ports:
+      - "${POST_PORT}:${POST_GRPC}"
