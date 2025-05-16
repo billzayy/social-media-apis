@@ -25,12 +25,11 @@ import { AddLikes, CheckLikes, RemoveLikes } from "@/config/axios";
 import { toast } from "sonner";
 
 const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comments, shares, media }) => {
-    const [likeData, setLikeData] = useState<number>(0)
-    const [likeCheck, setLikeCheck] = useState<boolean>(false)
-    const [clicked, setClicked] = useState<boolean>(false)
+    const [liked, setLiked] = useState<number>(likes)
+    const [clicked, setClicked] = useState<boolean>(false) 
 
     var interactList: Interacts[] = [
-        { name: "Like",data: likes, defaultIcon: LightThumbsUp, hoverIcon: DarkThumbsUp,color: "green"},
+        { name: "Like",data: liked, defaultIcon: LightThumbsUp, hoverIcon: DarkThumbsUp,color: "green"},
         { name: "Comment",data: comments, defaultIcon: LightMessage, hoverIcon: DarkMessage,color: "amber"},
         { name: "Share",data: shares, defaultIcon: LightShare, hoverIcon: DarkShare,color: "blue"}
     ]
@@ -40,15 +39,17 @@ const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comm
     useEffect(() => { 
         let isCancelled = false;
         async function fetchCheckLike() {
-            const resp = await CheckLikes(user.ID, id);
+            const resp = await CheckLikes(user.UserId, id);
 
             if (!isCancelled) {
-                if (resp.statusCode != 200) {
+                if (resp.statusCode !== 200 && resp.statusCode !== 404) {
                     toast.error(`Error get like data !`, {
                         description: resp.data.message,
                         position: "top-right"
                     })
-                } else { 
+                } else if (resp.statusCode === 404) {
+                    // setLikeData(0)
+                }else { 
                     if (resp.data == true) {
                         setClicked(true)
                     } else { 
@@ -68,13 +69,13 @@ const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comm
         <div className="w-full bg-white py-4 px-10 shadow-md my-10 border">
             <div id="Header" className="flex items-center">
                 <Avatar className='size-14 hover:cursor-pointer mr-5'>
-                    <AvatarImage src={user.profilePicture} alt="@shadcn" />
-                    <AvatarFallback>{user.fullName[0]}</AvatarFallback>
+                    <AvatarImage src={user.ProfilePicture == "" ? "Hello" : user.ProfilePicture} alt="@shadcn" />
+                    <AvatarFallback>{user.FullName[0]}</AvatarFallback>
                 </Avatar>
                 <div>
-                    <div className="hidden">{user.ID}</div>
-                    <div className="font-bold">{user.fullName}</div>
-                    <div className="text-gray-400 text-sm font-light">Junior Software Engineer at Google</div>
+                    <div className="hidden">{user.UserId}</div>
+                    <div className="font-bold">{user.FullName}</div>
+                    <div className="text-gray-400 text-sm font-light">Testing</div>
                     <div className="text-gray-400 text-sm font-light">{date.toLocaleDateString()}</div>
                 </div>
             </div>
@@ -94,27 +95,25 @@ const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comm
                 <div className="flex justify-center items-center">
                     {interactList.map((data, key) => (
                         <div
-                            onClick={() => {
-                                if (data.name == "Like" && !clicked) { 
-                                    AddLikes(user.ID, id)
+                            onClick={() => { 
+                                if (data.name == "Like" && !clicked) {
+                                    setLiked(liked + 1)
                                     setClicked(true)
-                                    setLikeData(likes+1)
-                                }
-
-                                if (data.name == "Like" && clicked) { 
-                                    RemoveLikes(user.ID, id)
+                                    AddLikes(user.UserId, id)
+                                } else if (data.name == "Like" && clicked) { 
+                                    setLiked(liked-1)
                                     setClicked(false)
-                                    setLikeData(likes-1)
+                                    RemoveLikes(user.UserId, id)
                                 }
                             }}
                             className="mr-5 flex items-center" key={key}>
-                            <IconComponents name={data.name} data={data.data} defaultIcon={data.defaultIcon} hoverIcon={data.hoverIcon} color={data.color} margin="mr-2"/>
+                            <IconComponents name={data.name} clicked={clicked} defaultIcon={data.defaultIcon} hoverIcon={data.hoverIcon} color={data.color} margin="mr-2"/>
                             <p className="text-sm">{data.data}</p>
                         </div>
                     ))}
                 </div>
                 <div>
-                    <IconComponents name="Shares" data={likeData} defaultIcon={LightBookMark} hoverIcon={DarkBookMark} color="amber"/>
+                    <IconComponents name="Shares" clicked={clicked} defaultIcon={LightBookMark} hoverIcon={DarkBookMark} color="amber"/>
                 </div>
             </div>
         </div>

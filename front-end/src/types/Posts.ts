@@ -37,3 +37,14 @@ export interface PostReq {
     shares: number,
     media?: PostMedia[]
 }
+
+export interface PostData { 
+    PostId: string,
+    Author: Users,
+    Content: string,
+    CreatedAt: string,
+    Likes: number,
+    Comments: number,
+    Shares: number,
+    Media: PostMedia[]
+}

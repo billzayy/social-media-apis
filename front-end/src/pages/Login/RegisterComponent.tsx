@@ -3,20 +3,23 @@ import { useState } from "react";
 import BasicComponent from "./RegisterBasic";
 import AdditionComponent from "./RegisterAddition";
 import RegisterFinal from "./RegisterFinal";
+import { RegisterAddition, RegisterReq } from "@/types/Users";
 
 var stepList: number[] = [1,2,3]
 
 const RegisterComponent: React.FC<{ dispatch: React.Dispatch<React.SetStateAction<string>> }> = ({ dispatch }) => {
-    const [selectedNum, useSelectedNum] = useState(1)
+    const [selectedNum, useSelectedNum] = useState<number>(1)
+    const [basicReq, setBasicReq] = useState<RegisterReq | undefined>()
+    const [addition, setAddition] = useState<RegisterAddition| undefined>()
 
     return (
         <div className="flex justify-center items-center mb-5">
             <div>
                 <div>
                     <Steps number={stepList} selectedNum={selectedNum} />
-                    {selectedNum == 2 ? <AdditionComponent dispatch={useSelectedNum} />:
-                            selectedNum == 3 ? <RegisterFinal/> :
-                            <BasicComponent dispatch={useSelectedNum} />
+                    {selectedNum == 2 ? <AdditionComponent dispatch={useSelectedNum} addition={setAddition} />:
+                            selectedNum == 3 ? <RegisterFinal basicReq={basicReq} addition={addition}/> :
+                            <BasicComponent dispatch={useSelectedNum} reqDispatch={setBasicReq}/>
                         } 
                 </div>
                 <div className="flex justify-center items-center mt-6 text-sm">

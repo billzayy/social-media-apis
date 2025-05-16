@@ -17,11 +17,12 @@ import { Link } from 'react-router-dom'
 import { IconComponents } from '@/components/ui/Icon'
 
 const NavRight: React.FC = () => {
+    var userName: string | null = localStorage.getItem("email")
     return (
         <div className="flex justify-center items-center w-[20%]">
-            <IconComponents defaultIcon={faSearch} margin='mr-8' />
-            <IconComponents hoverIcon={DarkBookMark} defaultIcon={LightBookMark} margin='mr-8'/>
-            <IconComponents hoverIcon={DarkBell} defaultIcon={LightBell} margin='mr-8'/>
+            <IconComponents name='' clicked={false} hoverIcon={faSearch} defaultIcon={faSearch} margin='mr-8' />
+            <IconComponents name='' clicked={false} hoverIcon={DarkBookMark} defaultIcon={LightBookMark} margin='mr-8'/>
+            <IconComponents name='' clicked={false} hoverIcon={DarkBell} defaultIcon={LightBell} margin='mr-8'/>
             <DropdownMenu>
                 <DropdownMenuTrigger>
                     <Avatar className='size-12 hover:cursor-pointer'>
@@ -30,7 +31,7 @@ const NavRight: React.FC = () => {
                     </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuLabel>{userName}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className='hover:cursor-pointer'>Profile</DropdownMenuItem>
                     <DropdownMenuItem className='hover:cursor-pointer'>Setting</DropdownMenuItem>

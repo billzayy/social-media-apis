@@ -2,6 +2,7 @@ import { GetPostAxios, ResponseAPI } from "@/config/axios";
 import UserPost from "./UserPost";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { PostData } from "@/types/Posts";
 
 const UserPostList: React.FC = () => {
     const [postData, setPostData] = useState<ResponseAPI | undefined>()
@@ -13,7 +14,7 @@ const UserPostList: React.FC = () => {
 
             if (!isCancelled) {
                 if (resp.statusCode != 200) {
-                    toast.error(`Error get post data !`, {
+                    toast.error(`Failed to get data !`, {
                         description: "result.data.message",
                         position: "top-right"
                     })
@@ -25,6 +26,7 @@ const UserPostList: React.FC = () => {
 
 
         fetchPostData();
+
         return () => {
             isCancelled = true;
         };
@@ -33,18 +35,18 @@ const UserPostList: React.FC = () => {
     
     return (
         <div>
-            {postData != undefined ? postData.data.map((v: any) => (
+            {postData !== undefined ? postData.data.PostList.map((v: PostData) => (
                 <div
-                    className="" key={v.postId}>
+                    className="" key={v.PostId}>
                     <UserPost
-                        id={v.postId}
-                        user={v.userId}
-                        content={v.content}
-                        createdAt={v.createdAt}
-                        likes={v.likes == undefined ? 0 : v.likes}
-                        comments={v.comments == undefined ? 0 : v.comments}
-                        shares={v.shares == undefined ? 0 : v.shares}
-                        media={v.media == undefined? undefined : v.media}
+                        id={v.PostId}
+                        user={v.Author}
+                        content={v.Content}
+                        createdAt={v.CreatedAt}
+                        likes={v.Likes == undefined ? 0 : v.Likes}
+                        comments={v.Comments == undefined ? 0 : v.Comments}
+                        shares={v.Shares == undefined ? 0 : v.Shares}
+                        media={v.Media == undefined? undefined : v.Media}
                     />
                 </div>
             )) : <div className="mt-10">Loading ...</div>}
