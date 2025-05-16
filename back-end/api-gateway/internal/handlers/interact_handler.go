@@ -38,7 +38,7 @@ func (iH *InteractHandler) CheckLikeHandler(c *gin.Context) {
 	}
 
 	if resp.Valid == false {
-		models.Response(c, http.StatusOK, false)
+		models.Response(c, http.StatusNotFound, false)
 		return
 	}
 

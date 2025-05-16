@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 
 	grpc "github.com/billzayy/social-media/back-end/post-service/api"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
@@ -107,7 +106,7 @@ func (iG *GrpcServer) CheckLike(ctx context.Context, req *grpc.LikeRequest) (*gr
 	}
 
 	if valid == false {
-		return &grpc.CheckLikeResp{Valid: false}, fmt.Errorf("not found")
+		return &grpc.CheckLikeResp{Valid: false}, nil
 	}
 
 	return &grpc.CheckLikeResp{Valid: valid}, nil
