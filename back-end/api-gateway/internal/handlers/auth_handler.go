@@ -53,8 +53,9 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 		Value:    resp.Cookie,
 		Expires:  time.Now().Add(168 * time.Hour),
 		HttpOnly: true, // If set true, the Front-End Js can not get the cookie
-		Path:     "/auth",
-		SameSite: 3,
+		Path:     "/",
+		SameSite: 4,
+		Secure:   true,
 	})
 
 	// fmt.Println(resp)

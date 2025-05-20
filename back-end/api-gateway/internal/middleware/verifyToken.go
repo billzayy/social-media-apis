@@ -5,57 +5,75 @@ import (
 	"fmt"
 	"os"
 
-	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/joho/godotenv"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func VerifyAccessToken(tokenString string) (string, error) {
-	err := godotenv.Load("./internal/.env")
+	// Get secret key from environment variable
+	secret := os.Getenv("ACCESS_TOKEN_KEY")
 
-	if err != nil {
-		return "", errors.New("error loading .env file")
+	if secret == "" {
+		return "", fmt.Errorf("secret key not set in environment: %s", "ACCESS_TOKEN_KEY")
 	}
 
-	mySigningKey := []byte(os.Getenv("ACCESS_TOKEN_KEY"))
-
+	// Parse and validate token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the signing method is HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return mySigningKey, nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("invalid token: %w", err)
 	}
 
-	return token.Claims.(jwt.MapClaims)["userID"].(string), nil
+	// Extract claims safely
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return "", errors.New("invalid token claims")
+	}
+
+	userID, ok := claims["sub"].(string)
+	if !ok {
+		return "", errors.New("sub claim missing or invalid")
+	}
+
+	return userID, nil
 }
 
 func VerifyRefreshToken(tokenString string) (string, error) {
-	err := godotenv.Load("./internal/.env")
+	// Get secret key from environment variable
+	secret := os.Getenv("REFRESH_TOKEN_KEY")
 
-	if err != nil {
-		err := godotenv.Load("../internal/.env")
-
-		if err != nil {
-			fmt.Println("Error loading file .env")
-			return "", err
-		}
+	if secret == "" {
+		return "", fmt.Errorf("secret key not set in environment: %s", "ACCESS_TOKEN_KEY")
 	}
 
-	mySigningKey := []byte(os.Getenv("REFRESH_TOKEN_KEY"))
-
+	// Parse and validate token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Ensure the signing method is HMAC
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return mySigningKey, nil
+		return []byte(secret), nil
 	})
 
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("invalid token: %w", err)
 	}
 
-	return token.Claims.(jwt.MapClaims)["userId"].(string), nil
+	// Extract claims safely
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return "", errors.New("invalid token claims")
+	}
+
+	userID, ok := claims["sub"].(string)
+	if !ok {
+		return "", errors.New("sub claim missing or invalid")
+	}
+
+	return userID, nil
 }

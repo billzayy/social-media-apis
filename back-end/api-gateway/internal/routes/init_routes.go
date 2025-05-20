@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/handlers"
+	"github.com/billzayy/social-media/back-end/api-gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,14 +14,15 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 		authV1.POST("/refresh-token", h.AuthHandler.RefreshTokenHandler)
 	}
 
-	postV1 := router.Group("/api/v1/post")
+	router.GET("/api/v1/post/get-post", h.PostHandler.GetPostHandler)
+
+	postV1 := router.Group("/api/v1/post", middleware.AuthMiddleware())
 	{
-		postV1.GET("/get-post", h.PostHandler.GetPostHandler)
 		postV1.POST("/add-post", h.PostHandler.AddPostHandler)
 		postV1.DELETE("/delete-post", h.PostHandler.DeletePostHandler)
 	}
 
-	interact := router.Group("/api/v1/interact")
+	interact := router.Group("/api/v1/interact", middleware.AuthMiddleware())
 	{
 		interact.POST("/check-like", h.InteractHandler.CheckLikeHandler)
 		interact.POST("/add-like", h.InteractHandler.AddLikeHandler)
