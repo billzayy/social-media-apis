@@ -1,33 +1,50 @@
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { LoginService } from "@/services/authService";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { LoginAxios } from "@/api/auth";
+import { toast } from "sonner";
 
-const LoginComponent: React.FC<{ dispatch: React.Dispatch<React.SetStateAction<string>> }> = ({ dispatch: state }) => { 
+const LoginComponent: React.FC = () => { 
     const [userName, setUserName] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const navigate = useNavigate()
 
+    const loginService = async () => { 
+        const result = await LoginAxios(userName, password);
+
+        if (result?.message == "Failure") { 
+            toast.error(`Login failed !`, {
+                description: result.data.message,
+                position: "top-right"
+            })
+        }else {
+            toast.success("Login successful!", {
+                position: "top-right"
+            });
+
+            navigate("/"); // Navigate to the dashboard or target page
+        }
+    }
+    
     return (
         <div className="block">
             <div>Welcome, login to your account!</div>
             <form action="" className="my-5">
                 <div>
-                    {/* <label>User name:</label> */}
                     <input
                         value={userName}
                         onChange={(e) => {setUserName(e.target.value)}}
                         type="text" placeholder="UserName" className="border border-black border-b-white text-white my-3.5 ml-2.5 w-[80%] py-1 focus:outline-none" />
                 </div>
                 <div>
-                    {/* <label>Password:</label> */}
                     <input
                         value={password}
                         onChange={(e) => {setPassword(e.target.value)}}
-                        type="text" placeholder="Password" className="border border-black border-b-white text-white my-3.5 ml-2.5 w-[80%] py-1 focus:outline-none" />
+                        type="password" placeholder="Password" className="border border-black border-b-white text-white my-3.5 ml-2.5 w-[80%] py-1 focus:outline-none" />
                 </div>
             </form>
+
             <div className="flex justify-around mb-3">
                 <div className="flex items-center">
                     <Switch className="h-5 mr-1.5 bg-gradient-to-r from-amber-400 hover:cursor-pointer"/>
@@ -35,15 +52,18 @@ const LoginComponent: React.FC<{ dispatch: React.Dispatch<React.SetStateAction<s
                 </div>
                 <div className="text-gray-500 hover:cursor-pointer font-light underline">Forgot Password?</div>
             </div>
+
             <Button
-                onClick={() => {LoginService(userName, password, navigate)}}
-                size="default" className="w-[80%] my-4 bg-amber-400 text-black h-[60%] hover:cursor-pointer hover:text-white hover:bg-gray-700">
-                Login</Button>
+                onClick={() => {loginService()}}
+                size="default"
+                className="w-[80%] my-4 bg-amber-400 text-black h-[60%] hover:cursor-pointer hover:text-white hover:bg-gray-700">
+                Login
+            </Button>
             <div className="flex justify-center mt-2 text-sm">
                 <p className="text-gray-500 font-thin">Don't have account yet?</p>
                 <p
                     className="text-amber-400 ml-2 font-light hover:cursor-pointer"
-                    onClick={() => {state("register")}}
+                    onClick={() => {navigate("/register")}}
                 >Sign Up</p>
             </div>
         </div>

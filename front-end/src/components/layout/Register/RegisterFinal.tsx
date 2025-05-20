@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button"
-import { RegisterAxios } from "@/config/axios"
+import { RegisterAxios } from "@/api/auth"
 import { RegisterAddition, RegisterReq } from "@/types/Users"
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
 const RegisterFinal: React.FC<{
+    // Dispatch Action for set Request Basic Register Data
     basicReq: RegisterReq | undefined
+    // Dispatch Action for set Request Addition Register Data
     addition: RegisterAddition | undefined
 }> = ({ basicReq, addition }) => { 
     const req: RegisterReq | undefined = basicReq
@@ -14,6 +16,8 @@ const RegisterFinal: React.FC<{
         : undefined;
     
     const [registerStatus, setRegisterStatus] = useState<boolean>(false)
+
+    const navigate = useNavigate()
 
     async function fetchRegister() { 
         const resp = await RegisterAxios(req)
@@ -27,10 +31,16 @@ const RegisterFinal: React.FC<{
             setRegisterStatus(true)
         }
     }
+
+    useEffect(() => {
+        if (registerStatus) {
+            navigate("/login")
+        }
+    }, [registerStatus, navigate])
+
     return (
         <div>
             <div className="font-bold text-xl my-5">All set !</div>
-            <div className="mb-3">Welcome to the Social Media ! Have fun </div>
             <Button
                 onClick={() => {
                     fetchRegister()
@@ -38,7 +48,7 @@ const RegisterFinal: React.FC<{
                 asChild className="mt-4 w-[100%] bg-amber-500 text-black hover:cursor-pointer hover:text-white">
                 { 
                     registerStatus ?
-                        <Link to={"/"}>Go to Homepage</Link> : <div></div>
+                        <Link to={"/login"}>Go to Login</Link> : <div>Go to Login</div>
                 }
             </Button>
         </div>

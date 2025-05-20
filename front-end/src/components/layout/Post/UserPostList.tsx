@@ -1,11 +1,19 @@
-import { GetPostAxios, ResponseAPI } from "@/config/axios";
+import { GetPostAxios } from "@/api/post";
+import { ResponseAPI } from "@/types/ResponseAPI";
+
 import UserPost from "./UserPost";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { PostData } from "@/types/Posts";
 
 const UserPostList: React.FC = () => {
-    const [postData, setPostData] = useState<ResponseAPI | undefined>()
+    var emptyValue: ResponseAPI = {
+        statusCode: 200,
+        data: [],
+        message:"Successful"
+    }
+
+    const [postData, setPostData] = useState<ResponseAPI>(emptyValue)
 
     useEffect(() => {
         let isCancelled = false;
@@ -15,7 +23,7 @@ const UserPostList: React.FC = () => {
             if (!isCancelled) {
                 if (resp.statusCode != 200) {
                     toast.error(`Failed to get data !`, {
-                        description: "result.data.message",
+                        description: resp.data.message,
                         position: "top-right"
                     })
                 } else { 
@@ -35,7 +43,7 @@ const UserPostList: React.FC = () => {
     
     return (
         <div>
-            {postData !== undefined ? postData.data.PostList.map((v: PostData) => (
+            {postData !== undefined && postData.data.PostList !== undefined ? postData.data.PostList.map((v: PostData) => (
                 <div
                     className="" key={v.PostId}>
                     <UserPost
@@ -49,7 +57,7 @@ const UserPostList: React.FC = () => {
                         media={v.Media == undefined? undefined : v.Media}
                     />
                 </div>
-            )) : <div className="mt-10">Loading ...</div>}
+            )) : postData.statusCode !== 200 ? <div className="mt-10">Skeleton</div>: <div>Login to Post</div> }
         </div>
     )
 }

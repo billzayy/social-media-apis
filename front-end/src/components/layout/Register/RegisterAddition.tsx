@@ -3,13 +3,15 @@ import { RegisterAddition } from "@/types/Users";
 import { useState } from "react";
 
 const AdditionComponent: React.FC<{
-    dispatch: React.Dispatch<React.SetStateAction<number>>
+    // Dispatch Action for set step need to move
+    moveToStep: React.Dispatch<React.SetStateAction<number>>
+     // Dispatch Action for set Request Addition Register Data
     addition: React.Dispatch<React.SetStateAction<RegisterAddition | undefined>>
-}> = ({ dispatch, addition }) => { 
+}> = ({ moveToStep, addition }) => { 
     const [bio, setBio] = useState<string>("")
     const [urls, setUrls] = useState<string[]>([])
 
-    const req: RegisterAddition = {
+    const req: RegisterAddition = { // Request Addition Register data
         Bio: bio || null,
         Url: urls
     }
@@ -55,7 +57,7 @@ const AdditionComponent: React.FC<{
             <br />
             <Button
                 onClick={() => {
-                    dispatch(3);
+                    moveToStep(3);
                     addition(req)
                 }}
                 className="mt-4 w-[100%] bg-amber-500 text-black hover:cursor-pointer hover:text-white"

@@ -1,8 +1,8 @@
 import Background from "../../assets/Bg-login.png"
 import Logo from "../../assets/Logo-Login.png"
-import LoginComponent from "../../components/layout/LoginComponent"
+import RegisterComponent from "../../components/layout/RegisterComponent"
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
     return (
         <div className="flex bg-black text-white w-screen h-screen items-center justify-center">
             <div className="picture">
@@ -13,11 +13,11 @@ const LoginPage: React.FC = () => {
                     <div className="flex justify-center my-5 mx">
                         <img src={Logo} alt="logo" className="w-[70%]" />
                     </div>
-                    <LoginComponent />
+                    <RegisterComponent />
                 </div>
             </div>
         </div>
     )
 }
 
-export default LoginPage
+export default RegisterPage

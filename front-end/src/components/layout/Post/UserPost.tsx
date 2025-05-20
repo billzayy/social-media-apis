@@ -21,7 +21,7 @@ import {
 import { PostReq } from "@/types/Posts";
 import { renderFormattedText } from "@/components/utils/FormattedText";
 import { useEffect, useState } from "react";
-import { AddLikes, CheckLikes, RemoveLikes } from "@/config/axios";
+import { AddLikes, CheckLikes, RemoveLikes } from "@/api/interact-like";
 import { toast } from "sonner";
 
 const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comments, shares, media }) => {
@@ -48,7 +48,7 @@ const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comm
                         position: "top-right"
                     })
                 } else if (resp.statusCode === 404) {
-                    // setLikeData(0)
+                    setClicked(false)
                 }else { 
                     if (resp.data == true) {
                         setClicked(true)

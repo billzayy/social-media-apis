@@ -3,9 +3,12 @@ import { RegisterReq } from "@/types/Users";
 import React, { useState } from "react";
 
 const BasicComponent: React.FC<{
-    dispatch: React.Dispatch<React.SetStateAction<number>>
-    reqDispatch : React.Dispatch<React.SetStateAction<RegisterReq|undefined>> 
-}> = ({ dispatch, reqDispatch }) => { 
+    // Dispatch Action for set step need to move
+    moveToStep: React.Dispatch<React.SetStateAction<number>>
+    // Dispatch Action for set Request Basic Register Data
+    reqDispatch : React.Dispatch<React.SetStateAction<RegisterReq | undefined>> 
+}> = ({ moveToStep, reqDispatch }) => { 
+    
     const [userName, setUserName] = useState<string>("")
     const [email, setEmail] = useState<string>("")
     const [firstName, setFirstName] = useState<string>("")
@@ -14,7 +17,8 @@ const BasicComponent: React.FC<{
     const [city, setCity] = useState<string>("")
     const [age, setAge] = useState<number>(0)
 
-    const req: RegisterReq = {
+    // Request Basic Register Data
+    const req: RegisterReq = { 
         UserName: userName,
         Email: email,
         FirstName: firstName,
@@ -70,7 +74,7 @@ const BasicComponent: React.FC<{
             </form>
             <Button
                 onClick={() => {
-                    dispatch(2);
+                    moveToStep(2);
                     reqDispatch(req)
                 }}
                 className="mt-4 w-[94%] bg-amber-500 text-black hover:cursor-pointer hover:text-white"

@@ -3,13 +3,13 @@ import React from "react"
 const Steps: React.FC<{ number:number[], selectedNum: number }> = ({number, selectedNum}) => { 
     return (
         <div className="flex items-center justify-center -mt-5">
-            {number.map((value)=> (
+            {number.map((value, key)=> (
                 value != number[number.length - 1] ?
-                    <div className="flex justify-center items-center">
+                    <div key={key} className="flex justify-center items-center">
                         <NumberBox number={value} selected={selectedNum == value} />
                         <Line/>
                     </div> :
-                    <NumberBox number={value} selected={selectedNum == value} />
+                    <NumberBox key={key} number={value} selected={selectedNum == value} />
             ))}
         </div>
     )

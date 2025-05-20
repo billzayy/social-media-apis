@@ -13,11 +13,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IconComponents } from '@/components/ui/Icon'
 
 const NavRight: React.FC = () => {
     var userName: string | null = localStorage.getItem("email")
+    const navigate = useNavigate()
+
     return (
         <div className="flex justify-center items-center w-[20%]">
             <IconComponents name='' clicked={false} hoverIcon={faSearch} defaultIcon={faSearch} margin='mr-8' />
@@ -37,10 +39,13 @@ const NavRight: React.FC = () => {
                     <DropdownMenuItem className='hover:cursor-pointer'>Setting</DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => {
-                            sessionStorage.removeItem("local")
+                            localStorage.removeItem("token")
+                            localStorage.removeItem("id")
+                            sessionStorage.removeItem("cookie")
+                            navigate("/login")
                         }}
                         className='hover:cursor-pointer'>
-                        <Link to={"/login"}>Log Out</Link>
+                        <div>Log Out</div>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
