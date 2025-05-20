@@ -16,13 +16,24 @@ import {
     faBookmark as DarkBookMark,
     faMessage as DarkMessage,
     faShareFromSquare as DarkShare,
-    faThumbsUp as DarkThumbsUp
+    faThumbsUp as DarkThumbsUp,
+    faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
+
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+  
+  
 import { PostReq } from "@/types/Posts";
 import { renderFormattedText } from "@/components/utils/FormattedText";
 import { useEffect, useState } from "react";
 import { AddLikes, CheckLikes, RemoveLikes } from "@/api/interact-like";
 import { toast } from "sonner";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DeletePostService } from "@/services/DeletePostService";
 
 const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comments, shares, media }) => {
     const [liked, setLiked] = useState<number>(likes)
@@ -66,58 +77,93 @@ const UserPost: React.FC<PostReq> = ({ id, user, content, createdAt, likes, comm
     },[])
 
     return (
-        <div className="w-full bg-white py-4 px-10 shadow-md my-10 border">
-            <div id="Header" className="flex items-center">
-                <Avatar className='size-14 hover:cursor-pointer mr-5'>
-                    <AvatarImage src={user.ProfilePicture == "" ? "Hello" : user.ProfilePicture} alt="@shadcn" />
-                    <AvatarFallback>{user.FullName[0]}</AvatarFallback>
-                </Avatar>
-                <div>
-                    <div className="hidden">{user.UserId}</div>
-                    <div className="font-bold">{user.FullName}</div>
-                    <div className="text-gray-400 text-sm font-light">Testing</div>
-                    <div className="text-gray-400 text-sm font-light">{date.toLocaleDateString()}</div>
-                </div>
-            </div>
-            
-            {
-                media != undefined ?
-                   <div id="content" className="my-5 w-full">
-                        {renderFormattedText(content)}
-                        <img src={media[0].Url} alt="" className="my-4"/> 
-                    </div> :
-                    <div id="content" className="my-5 w-full">
-                        {renderFormattedText(content)}
-                    </div>
-            }
-            
-            <div id="interact " className="flex justify-between items-center">
-                <div className="flex justify-center items-center">
-                    {interactList.map((data, key) => (
+			<div className="w-full bg-white py-4 px-10 shadow-md my-10 border">
+				<div id="Header" className="flex justify-between">
+					<div className="flex items-center">
+						<Avatar className="size-14 hover:cursor-pointer mr-5">
+							<AvatarImage
+								src={user.ProfilePicture == "" ? "Hello" : user.ProfilePicture}
+								alt="@shadcn"
+							/>
+							<AvatarFallback>{user.FullName[0]}</AvatarFallback>
+						</Avatar>
+						<div>
+							<div className="hidden">{user.UserId}</div>
+							<div className="font-bold">{user.FullName}</div>
+							<div className="text-gray-400 text-sm font-light">Testing</div>
+							<div className="text-gray-400 text-sm font-light">
+								{date.toLocaleDateString()}
+							</div>
+						</div>
+					</div>
+					<Popover>
+						<PopoverTrigger asChild>
+							<div className="hover:cursor-pointer hover:bg-gray-100 w-8 h-8 m-3 flex justify-center items-center relative left-10 -top-4 rounded-3xl">
+								<FontAwesomeIcon icon={faEllipsisV} />
+							</div>
+						</PopoverTrigger>
+						<PopoverContent>
                         <div
-                            onClick={() => { 
-                                if (data.name == "Like" && !clicked) {
-                                    setLiked(liked + 1)
-                                    setClicked(true)
-                                    AddLikes(user.UserId, id)
-                                } else if (data.name == "Like" && clicked) { 
-                                    setLiked(liked-1)
-                                    setClicked(false)
-                                    RemoveLikes(user.UserId, id)
-                                }
-                            }}
-                            className="mr-5 flex items-center" key={key}>
-                            <IconComponents name={data.name} clicked={clicked} defaultIcon={data.defaultIcon} hoverIcon={data.hoverIcon} color={data.color} margin="mr-2"/>
-                            <p className="text-sm">{data.data}</p>
-                        </div>
-                    ))}
-                </div>
-                <div>
-                    <IconComponents name="Shares" clicked={clicked} defaultIcon={LightBookMark} hoverIcon={DarkBookMark} color="amber"/>
-                </div>
-            </div>
-        </div>
-    )
+                            onClick={() => {DeletePostService(user.UserId, id);}}
+                            className="hover:bg-gray-100 hover:cursor-pointer">Delete Post</div>
+						</PopoverContent>
+					</Popover>
+					
+				</div>
+
+				{media != undefined ? (
+					<div id="content" className="my-5 w-full">
+						{renderFormattedText(content)}
+						<img src={media[0].Url} alt="" className="my-4" />
+					</div>
+				) : (
+					<div id="content" className="my-5 w-full">
+						{renderFormattedText(content)}
+					</div>
+				)}
+
+				<div id="interact " className="flex justify-between items-center">
+					<div className="flex justify-center items-center">
+						{interactList.map((data, key) => (
+							<div
+								onClick={() => {
+									if (data.name == "Like" && !clicked) {
+										setLiked(liked + 1);
+										setClicked(true);
+										AddLikes(user.UserId, id);
+									} else if (data.name == "Like" && clicked) {
+										setLiked(liked - 1);
+										setClicked(false);
+										RemoveLikes(user.UserId, id);
+									}
+								}}
+								className="mr-5 flex items-center"
+								key={key}
+							>
+								<IconComponents
+									name={data.name}
+									clicked={clicked}
+									defaultIcon={data.defaultIcon}
+									hoverIcon={data.hoverIcon}
+									color={data.color}
+									margin="mr-2"
+								/>
+								<p className="text-sm">{data.data}</p>
+							</div>
+						))}
+					</div>
+					<div>
+						<IconComponents
+							name="Shares"
+							clicked={clicked}
+							defaultIcon={LightBookMark}
+							hoverIcon={DarkBookMark}
+							color="amber"
+						/>
+					</div>
+				</div>
+			</div>
+		);
 }
 
 export default UserPost;

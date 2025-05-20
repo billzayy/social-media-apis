@@ -2,31 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { LoginAxios } from "@/api/auth";
-import { toast } from "sonner";
+import { LoginService } from "../../services/LoginService";
 
 const LoginComponent: React.FC = () => { 
     const [userName, setUserName] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const navigate = useNavigate()
 
-    const loginService = async () => { 
-        const result = await LoginAxios(userName, password);
-
-        if (result?.message == "Failure") { 
-            toast.error(`Login failed !`, {
-                description: result.data.message,
-                position: "top-right"
-            })
-        }else {
-            toast.success("Login successful!", {
-                position: "top-right"
-            });
-
-            navigate("/"); // Navigate to the dashboard or target page
-        }
-    }
-    
     return (
         <div className="block">
             <div>Welcome, login to your account!</div>
@@ -54,7 +36,7 @@ const LoginComponent: React.FC = () => {
             </div>
 
             <Button
-                onClick={() => {loginService()}}
+                onClick={() => {LoginService(userName, password, navigate)}}
                 size="default"
                 className="w-[80%] my-4 bg-amber-400 text-black h-[60%] hover:cursor-pointer hover:text-white hover:bg-gray-700">
                 Login

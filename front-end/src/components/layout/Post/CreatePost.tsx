@@ -7,8 +7,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import { useState } from "react";
-import { AddPostAxios } from "@/api/post";
-import { toast } from "sonner";
+import { AddPostService } from "@/services/AddPostService";
 
 interface Options{
     icon: IconDefinition,
@@ -25,7 +24,13 @@ var OptionsList: Options[] = [
 const CreatePost: React.FC = () => {
     const [content, setContent] = useState<string>("")
 
-    var userId = localStorage.getItem("id")
+	var userId = localStorage.getItem("id")
+	
+	const handlePost = async () => {
+		await AddPostService(userId, content);
+		setContent(""); // optionally clear the input
+	};
+	
 
     return (
 			<div className="bg-white shadow-xl px-5 py-4 border">
@@ -44,23 +49,7 @@ const CreatePost: React.FC = () => {
 					/>
 
                     <div
-					onClick={() => {
-						if (content == "" || content == null) { 
-							toast.error("Failed to create post", {
-								description: "Content is empty!",
-								position: "top-right",
-							});
-						}
-						
-                            if (userId === null || userId === "") {
-								toast.error("Failed to create post!", {
-									description: "Please login to create post!",
-									position: "top-right"
-								})
-                            } else { 
-                                AddPostAxios(userId, content);
-                            }
-                        }} 
+						onClick={handlePost} 
                         className={`${content === "" ? "hidden" : "flex"} hover:cursor-pointer`}>
 						<FontAwesomeIcon icon={faCircleUp} size="lg" className="mx-2.5 text-blue-400"/>
 					</div>
@@ -68,14 +57,8 @@ const CreatePost: React.FC = () => {
 				<div className="my-2 border-t border-gray-300"></div>
 				<div id="down" className="flex items-center justify-between px-2">
 					{OptionsList.map((data, key) => (
-						<div
-							key={key}
-							className="flex items-center hover:cursor-pointer mt-3 mb-2"
-						>
-							<FontAwesomeIcon
-								icon={data.icon}
-								className="mr-2.5 text-blue-400"
-							/>
+						<div key={key} className="flex items-center hover:cursor-pointer mt-3 mb-2">
+							<FontAwesomeIcon icon={data.icon} className="mr-2.5 text-blue-400"/>	
 							<p className="">{data.name}</p>
 						</div>
 					))}
