@@ -71,7 +71,7 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 
 	resp, err := client.CreatePost(ctx, &req)
 
-	models.Response(c, http.StatusOK, resp)
+	models.Response(c, http.StatusCreated, resp)
 }
 
 func (pH *PostHandler) DeletePostHandler(c *gin.Context) {
