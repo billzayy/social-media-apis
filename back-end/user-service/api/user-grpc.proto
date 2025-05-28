@@ -1,0 +1,56 @@
+syntax="proto3";
+
+package proto;
+
+option go_package = "github.com/billzayy/social-media/back-end/user-service/api";
+
+import "google/protobuf/empty.proto";
+
+service UserService{
+    rpc GetUserById(ReqGetUser) returns(RespGetUser);
+    rpc UpdateInfoUser(ReqUpdateInfo) returns (google.protobuf.Empty);
+    rpc UpdatePassword(ReqUpdatePassword) returns (google.protobuf.Empty);
+}
+
+message ReqGetUser{
+    string Id = 1;
+}
+
+message RespGetUser{
+    string Id = 1;
+    string UserName = 2;
+    string FullName = 3;
+    string Email = 4;
+    string UserSince = 5;
+    string LastLogin = 6;
+    bool Active = 7;
+    string ProfilePicture = 8;
+    string Description = 9;
+    string Location = 10;
+    repeated string Website = 11;
+    string BirthDate = 12;
+    string Theme = 13;
+    string Language = 14;
+    string Country = 15;
+}
+
+message ReqUpdateInfo{
+    string Id = 1;
+    string UserName = 2;
+    string FullName = 3;
+    string Email = 4;
+    string ProfilePicture = 5;
+    string Description = 6;
+    string Location = 7;
+    repeated string Website = 8;
+    string BirthDate = 9;
+    string Theme = 10;
+    string Language = 11;
+    string Country = 12; 
+}
+
+message ReqUpdatePassword{
+    string Id = 1;
+    string OldPassword = 2;
+    string NewPassword = 3;
+}

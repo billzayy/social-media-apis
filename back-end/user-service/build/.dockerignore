@@ -1,0 +1,18 @@
+# Binaries
+authen-service
+
+# Build directories
+/app
+
+# Git
+.git
+.gitignore
+
+# OS/Editor
+*.swp
+*.DS_Store
+*.idea
+.vscode
+
+# Env
+*.env
