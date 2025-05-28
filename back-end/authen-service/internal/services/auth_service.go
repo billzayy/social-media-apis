@@ -95,15 +95,21 @@ func (as *AuthService) LoginService(userName string, password string) (models.Us
 }
 
 func (as *AuthService) RefreshTokenService(cookieToken string) (string, string, http.Cookie, error) {
-	// Check the refresh token is valid or not
+	ctx := context.Background()
+
 	userId, err := middleware.VerifyToken(cookieToken, "REFRESH_TOKEN_KEY")
 
 	if err != nil {
 		return "", "", http.Cookie{}, err
 	}
 
-	// Create new access & refresh token
 	newToken, cookie, err := middleware.GenerateTokens(userId)
+
+	if err != nil {
+		return "", "", http.Cookie{}, err
+	}
+
+	err = as.AuthRepository.SaveUserRedis(ctx, userId, newToken)
 
 	if err != nil {
 		return "", "", http.Cookie{}, err

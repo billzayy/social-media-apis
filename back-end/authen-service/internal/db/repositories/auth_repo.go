@@ -32,13 +32,13 @@ func NewAuthRepository(db *sql.DB, rdb *redis.Client) *AuthRepository {
 }
 
 // * Add User Function
-func (ur *AuthRepository) AddUser(userName string, fullName string, email string, pass string) error {
+func (ar *AuthRepository) AddUser(userName string, fullName string, email string, pass string) error {
 	query := fmt.Sprintf(`INSERT INTO public."Users" 
 	("UserName", "FullName", "Email", "Password", "LastLogin") 
 	VALUES ('%s', '%s', '%s', '%s', '%s')`,
 		userName, fullName, email, pass, time.DateTime)
 
-	_, err := ur.db.Exec(query)
+	_, err := ar.db.Exec(query)
 
 	if err != nil {
 		return err
@@ -48,11 +48,11 @@ func (ur *AuthRepository) AddUser(userName string, fullName string, email string
 }
 
 // * GetUserId Function
-func (ur *AuthRepository) GetUserId(userName string, hashedPassword string) (string, error) {
+func (ar *AuthRepository) GetUserId(userName string, hashedPassword string) (string, error) {
 	query := fmt.Sprintf(`SELECT u."ID" FROM public."Users" u 
 	WHERE u."UserName" = '%s' AND u."Password" = '%s'`, userName, hashedPassword)
 
-	rows, err := ur.db.Query(query)
+	rows, err := ar.db.Query(query)
 
 	if err != nil {
 		return "", err
@@ -70,11 +70,11 @@ func (ur *AuthRepository) GetUserId(userName string, hashedPassword string) (str
 	return userId, nil
 }
 
-func (ur *AuthRepository) GetHashedPassword(userName string) (string, error) {
+func (ar *AuthRepository) GetHashedPassword(userName string) (string, error) {
 	query := fmt.Sprintf(`SELECT "Password" FROM public."Users" 
 	WHERE "UserName" = '%s' OR "Email" = '%s'`, userName, userName)
 
-	rows, err := ur.db.Query(query)
+	rows, err := ar.db.Query(query)
 
 	defer rows.Close()
 
@@ -94,11 +94,11 @@ func (ur *AuthRepository) GetHashedPassword(userName string) (string, error) {
 	return hashedPass, nil
 }
 
-func (ur *AuthRepository) CheckEmail(email string) (bool, error) {
+func (ar *AuthRepository) CheckEmail(email string) (bool, error) {
 	query := fmt.Sprintf(`SELECT exists(SELECT "Email" FROM public."Users" 
 	WHERE "Email" = '%s' )`, email)
 
-	rows, err := ur.db.Query(query)
+	rows, err := ar.db.Query(query)
 
 	if err != nil {
 		return false, err
@@ -118,8 +118,8 @@ func (ur *AuthRepository) CheckEmail(email string) (bool, error) {
 	return checked, nil
 }
 
-func (ur *AuthRepository) SaveUserRedis(ctx context.Context, userId string, token string) error {
-	_, err := ur.rdb.HSet(ctx, "loginList", userId, token).Result()
+func (ar *AuthRepository) SaveUserRedis(ctx context.Context, userId string, token string) error {
+	_, err := ar.rdb.HSet(ctx, "loginList", userId, token).Result()
 
 	if err != nil {
 		return err
