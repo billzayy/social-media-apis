@@ -1,10 +1,12 @@
 package services
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/billzayy/social-media/back-end/post-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
+	"github.com/billzayy/social-media/back-end/post-service/internal/utils"
 )
 
 type PostService struct {
@@ -18,6 +20,7 @@ func NewPostService(pr *repositories.PostRepository) *PostService {
 }
 
 func (pS *PostService) CreatePost(req models.AddPostRequest) (bool, error) {
+	ctx := context.Background()
 	if req.Content == "" {
 		return false, fmt.Errorf("content can not empty")
 	}
@@ -28,20 +31,57 @@ func (pS *PostService) CreatePost(req models.AddPostRequest) (bool, error) {
 		return false, err
 	}
 
+	data, err := pS.PostRepository.GetPost()
+
+	if err != nil {
+		return false, err
+	}
+
+	err = pS.PostRepository.AddPostRedis(ctx, data[0])
+
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
 func (pS *PostService) GetPost() ([]models.PostResp, error) {
-	data, err := pS.PostRepository.GetPost()
+	ctx := context.Background()
+
+	res, err := pS.PostRepository.GetPostRedis(ctx)
 
 	if err != nil {
+		return []models.PostResp{}, err
+	}
+
+	if len(res) == 0 {
+		data, err := pS.PostRepository.GetPost()
+
+		if err != nil {
+			return []models.PostResp{}, err
+		}
+
+		if len(data) == 0 {
+			return []models.PostResp{}, nil
+		}
+
+		for _, v := range data {
+			err := pS.PostRepository.AddPostRedis(ctx, v)
+
+			if err != nil {
+				return []models.PostResp{}, err
+			}
+		}
+
 		return data, err
 	}
 
-	return data, nil
+	return utils.SortPostWithCreatedTime(res), nil
 }
 
 func (pS *PostService) DeletePost(id string) error {
+	ctx := context.Background()
 	if id == "" {
 		return fmt.Errorf("id is not empty")
 	}
@@ -54,6 +94,12 @@ func (pS *PostService) DeletePost(id string) error {
 
 	if affected == 0 {
 		return fmt.Errorf("post %s not found", id)
+	}
+
+	err = pS.PostRepository.DeletePostByIdRedis(ctx, id)
+
+	if err != nil {
+		return fmt.Errorf("%v", err)
 	}
 
 	return nil

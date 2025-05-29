@@ -1,12 +1,14 @@
 package repositories
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
+	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -101,4 +103,105 @@ func (pR *PostRepository) DeletePost(postId string) (int64, error) {
 	}
 
 	return resp, nil
+}
+
+func (pR *PostRepository) GetPostRedis(ctx context.Context) ([]models.PostResp, error) {
+	rawData, err := pR.rdb.JSONGet(ctx, "postList", "$").Result()
+	if err != nil {
+		return []models.PostResp{}, err
+	}
+
+	if rawData == "" {
+		return []models.PostResp{}, nil
+	}
+
+	var outer []json.RawMessage
+	if err := json.Unmarshal([]byte(rawData), &outer); err != nil {
+		return []models.PostResp{}, fmt.Errorf("failed to unmarshal outer array: %w", err)
+	}
+
+	if len(outer) == 0 {
+		return []models.PostResp{}, nil
+	}
+
+	var posts []models.PostResp
+	if err := json.Unmarshal(outer[0], &posts); err != nil {
+		return []models.PostResp{}, fmt.Errorf("failed to unmarshal posts: %w", err)
+	}
+
+	return posts, nil
+}
+
+func (pR *PostRepository) AddPostRedis(ctx context.Context, input models.PostResp) error {
+	// Serialize newPost to JSON string
+	postJSON, err := json.Marshal(input)
+	if err != nil {
+		return fmt.Errorf("failed to marshal post: %w", err)
+	}
+
+	// Check if postList key exists
+	exists, err := pR.rdb.Exists(ctx, "postList").Result()
+	if err != nil {
+		return fmt.Errorf("failed to check key existence: %w", err)
+	}
+
+	if exists == 0 {
+		// Key does not exist, create it as an array with the new post
+		var posts []models.PostResp
+		posts = append(posts, input)
+		fullJSON, err := json.Marshal(posts)
+		if err != nil {
+			return fmt.Errorf("failed to marshal post array: %w", err)
+		}
+
+		_, err = pR.rdb.JSONSet(ctx, "postList", "$", fullJSON).Result()
+		if err != nil {
+			return fmt.Errorf("failed to JSONSet: %w", err)
+		}
+
+		return nil
+	}
+
+	// Key exists, append new post to the array
+	_, err = pR.rdb.JSONArrAppend(ctx, "postList", "$", string(postJSON)).Result()
+	if err != nil {
+		return fmt.Errorf("failed to JSONArrAppend: %w", err)
+	}
+
+	return nil
+}
+
+func (pR *PostRepository) DeletePostByIdRedis(ctx context.Context, postId string) error {
+	parseId, err := uuid.Parse(postId)
+
+	if err != nil {
+		return err
+	}
+
+	getData, err := pR.GetPostRedis(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	var newPost []models.PostResp
+	for _, v := range getData {
+		if v.PostId != parseId {
+			newPost = append(newPost, v)
+		}
+	}
+
+	// Marshal back to JSON
+	updatedData, err := json.Marshal(newPost)
+	if err != nil {
+		return err
+	}
+
+	// Save back to Redis
+	err = pR.rdb.JSONSet(ctx, "postList", "$", updatedData).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

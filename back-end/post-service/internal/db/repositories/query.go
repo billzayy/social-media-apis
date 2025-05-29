@@ -25,4 +25,5 @@ var GetPostQuery = fmt.Sprintf(`
 	LEFT JOIN public."Users" u ON u."ID" = p."UserId"
 	LEFT JOIN public."PostMedia" pm ON pm."PostId" = p."ID"
 	GROUP BY p."ID", u."ID", u."FullName", u."ProfilePicture"
+	ORDER BY p."CreatedAt" DESC
 LIMIT 1000;`)
