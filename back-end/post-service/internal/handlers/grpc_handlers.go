@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 
 	grpc "github.com/billzayy/social-media/back-end/post-service/api"
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
@@ -27,10 +28,16 @@ func NewPostGrpcServer(sv *services.Services) *GrpcServer {
 }
 
 func (pG *GrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*grpc.GetPostResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in GetPost")
+		}
+	}()
+
 	posts, err := pG.PostService.GetPost()
 
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to Get post : %v", err)
+		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	var protoPosts []*grpc.PostResp
@@ -56,6 +63,11 @@ func (pG *GrpcServer) GetPost(ctx context.Context, _ *emptypb.Empty) (*grpc.GetP
 }
 
 func (pG *GrpcServer) CreatePost(ctx context.Context, request *grpc.CreatePostReq) (*grpc.CreatePostResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in CreatePost")
+		}
+	}()
 
 	r := models.AddPostRequest{
 		UserId:    uuid.MustParse(request.UserId),
@@ -66,43 +78,55 @@ func (pG *GrpcServer) CreatePost(ctx context.Context, request *grpc.CreatePostRe
 	valid, err := pG.PostService.CreatePost(r)
 
 	if err != nil {
-		return &grpc.CreatePostResp{Message: "Create Failed !"}, err
+		return &grpc.CreatePostResp{Message: "Create Failed !"}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	if valid == false {
-		return &grpc.CreatePostResp{Message: "Create Failed"}, err
+		return &grpc.CreatePostResp{Message: "Create Failed"}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &grpc.CreatePostResp{Message: "Post Created !"}, nil
 }
 
 func (pG *GrpcServer) DeletePost(ctx context.Context, req *grpc.DeletePostReq) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in DeletePost")
+		}
+	}()
+
 	err := pG.PostService.DeletePost(req.Id)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &emptypb.Empty{}, nil
 }
 
 func (iG *GrpcServer) CheckLike(ctx context.Context, req *grpc.LikeRequest) (*grpc.CheckLikeResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in CheckLike")
+		}
+	}()
+
 	userId, err := uuid.Parse(req.UserId)
 
 	if err != nil {
-		return &grpc.CheckLikeResp{Valid: false}, err
+		return &grpc.CheckLikeResp{Valid: false}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	postId, err := uuid.Parse(req.PostId)
 
 	if err != nil {
-		return &grpc.CheckLikeResp{Valid: false}, err
+		return &grpc.CheckLikeResp{Valid: false}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	valid, err := iG.InteractService.CheckLikeOnPostService(userId, postId)
 
 	if err != nil {
-		return &grpc.CheckLikeResp{Valid: false}, err
+		return &grpc.CheckLikeResp{Valid: false}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	if valid == false {
@@ -113,60 +137,78 @@ func (iG *GrpcServer) CheckLike(ctx context.Context, req *grpc.LikeRequest) (*gr
 }
 
 func (iG *GrpcServer) AddLike(ctx context.Context, req *grpc.LikeRequest) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in AddLike")
+		}
+	}()
+
 	userId, err := uuid.Parse(req.UserId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	postId, err := uuid.Parse(req.PostId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	err = iG.InteractService.AddLikeService(userId, postId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &emptypb.Empty{}, nil
 }
 
 func (iG *GrpcServer) RemoveLike(ctx context.Context, req *grpc.LikeRequest) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in RemoveLike")
+		}
+	}()
+
 	userId, err := uuid.Parse(req.UserId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	postId, err := uuid.Parse(req.PostId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	err = iG.InteractService.RemoveLikeService(userId, postId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &emptypb.Empty{}, nil
 }
 
 func (iG *GrpcServer) AddComment(ctx context.Context, req *grpc.AddCommentReq) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in Add Comment")
+		}
+	}()
+
 	userId, err := uuid.Parse(req.UserId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	postId, err := uuid.Parse(req.PostId)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	input := models.CommentRequest{
@@ -178,23 +220,29 @@ func (iG *GrpcServer) AddComment(ctx context.Context, req *grpc.AddCommentReq) (
 	err = iG.InteractService.AddCommentService(input)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &emptypb.Empty{}, nil
 }
 
 func (iG *GrpcServer) DeleteComment(ctx context.Context, req *grpc.DeleteCommentReq) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in DeleteComment")
+		}
+	}()
+
 	id, err := uuid.Parse(req.Id)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	err = iG.InteractService.DeleteCommentService(id)
 
 	if err != nil {
-		return &emptypb.Empty{}, err
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &emptypb.Empty{}, nil
