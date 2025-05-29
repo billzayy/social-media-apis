@@ -26,6 +26,7 @@ func main() {
 	h := handlers.NewHandlers(&handlers.PortList{
 		AuthPort: os.Getenv("AUTH_PORT"),
 		PostPort: os.Getenv("POST_PORT"),
+		UserPort: os.Getenv("USER_PORT"),
 	})
 
 	r.Use(cors.New(cors.Config{

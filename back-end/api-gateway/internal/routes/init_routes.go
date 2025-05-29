@@ -30,4 +30,11 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 		interact.DELETE("/delete-like", h.InteractHandler.RemoveLikeHandler)
 		interact.DELETE("/delete-comment", h.InteractHandler.DeleteCommentHandler)
 	}
+
+	user := router.Group("/api/v1/user", middleware.AuthMiddleware())
+	{
+		user.GET("/get-user", h.UserHandler.GetUserByIdHandler)
+		user.PATCH("/update-info", h.UserHandler.UpdateUserHandler)
+		user.PATCH("/change-password", h.UserHandler.UpdatePasswordHandler)
+	}
 }

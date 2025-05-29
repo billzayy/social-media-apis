@@ -3,6 +3,7 @@ package repository
 import (
 	authPb "github.com/billzayy/social-media/back-end/authen-service/api"
 	postPb "github.com/billzayy/social-media/back-end/post-service/api"
+	userPb "github.com/billzayy/social-media/back-end/user-service/api"
 	"google.golang.org/grpc"
 )
 
@@ -28,4 +29,16 @@ func PostRepo(port string) (*grpc.ClientConn, postPb.PostServiceClient, error) {
 	client := postPb.NewPostServiceClient(postServer)
 
 	return postServer, client, nil
+}
+
+func UserRepo(port string) (*grpc.ClientConn, userPb.UserServiceClient, error) {
+	userServer, err := ConnectService("localhost", port)
+
+	if err != nil {
+		return &grpc.ClientConn{}, nil, err
+	}
+
+	client := userPb.NewUserServiceClient(userServer)
+
+	return userServer, client, nil
 }

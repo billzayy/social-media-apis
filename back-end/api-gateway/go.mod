@@ -1,20 +1,23 @@
 module github.com/billzayy/social-media/back-end/api-gateway
 
-go 1.24.2
+go 1.24.3
 
 replace github.com/billzayy/social-media/back-end/authen-service => ../authen-service
 
 replace github.com/billzayy/social-media/back-end/post-service => ../post-service
 
+replace github.com/billzayy/social-media/back-end/user-service => ../user-service
+
 require (
 	github.com/billzayy/social-media/back-end/authen-service v0.0.0-00010101000000-000000000000
 	github.com/billzayy/social-media/back-end/post-service v0.0.0-00010101000000-000000000000
+	github.com/billzayy/social-media/back-end/user-service v0.0.0-00010101000000-000000000000
 	github.com/gin-contrib/cors v1.7.5
-	github.com/gin-gonic/gin v1.10.0
+	github.com/gin-gonic/gin v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.37.0
-	google.golang.org/grpc v1.71.1
+	golang.org/x/crypto v0.38.0
+	google.golang.org/grpc v1.72.2
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -39,8 +42,8 @@ require (
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.15.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/text v0.24.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/text v0.25.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250414145226-207652e42e2e // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

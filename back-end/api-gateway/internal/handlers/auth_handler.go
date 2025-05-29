@@ -82,7 +82,7 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 	var req pb.RegisterReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		models.Response(c, http.StatusBadRequest, err)
+		models.Response(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -116,21 +116,21 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 	defer cancel()
 
 	if err != nil {
-		models.Response(c, http.StatusInternalServerError, err)
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	var req *pb.RefreshTokenReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		models.Response(c, http.StatusBadRequest, err)
+		models.Response(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	resp, err := client.RefreshToken(ctx, req)
 
 	if err != nil {
-		models.Response(c, http.StatusInternalServerError, err)
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

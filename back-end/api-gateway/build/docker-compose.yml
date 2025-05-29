@@ -10,3 +10,9 @@ services:
     container_name: post-service
     ports:
       - "${POST_PORT}:${POST_GRPC}"
+
+  user-server:
+    image: coderbillzay/social-user-service
+    container_name: user-service
+    ports:
+      - "${USER_PORT}:${USER_GRPC}"
