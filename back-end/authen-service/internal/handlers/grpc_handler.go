@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"log"
 
 	auth "github.com/billzayy/social-media/back-end/authen-service/api"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/models"
@@ -20,6 +21,12 @@ func NewAuthGrpcServer(sv *services.AuthService) *AuthGrpcServer {
 }
 
 func (aG *AuthGrpcServer) Register(ctx context.Context, req *auth.RegisterReq) (*auth.RegisterResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in Register")
+		}
+	}()
+
 	requestData := models.RegisterRequest{
 		UserName:    req.GetUserName(),
 		Email:       req.GetEmail(),
@@ -35,16 +42,22 @@ func (aG *AuthGrpcServer) Register(ctx context.Context, req *auth.RegisterReq) (
 	data, err := aG.AuthService.RegisterService(requestData)
 
 	if err != nil || !data {
-		return &auth.RegisterResp{Successful: false}, status.Errorf(codes.Internal, "failed to register: %v", err)
+		return &auth.RegisterResp{Successful: false}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &auth.RegisterResp{Successful: data}, nil
 }
 
 func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.LoginResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in Login")
+		}
+	}()
+
 	token, cookie, err := aG.AuthService.LoginService(req.GetUserName(), req.GetPassword())
 	if err != nil {
-		return &auth.LoginResp{}, status.Errorf(codes.Internal, "refresh token failed: %v", err)
+		return &auth.LoginResp{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &auth.LoginResp{
@@ -56,9 +69,15 @@ func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.
 }
 
 func (aG *AuthGrpcServer) RefreshToken(ctx context.Context, req *auth.RefreshTokenReq) (*auth.RefreshTokenResp, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in RefreshToken")
+		}
+	}()
+
 	userId, newToken, cookie, err := aG.AuthService.RefreshTokenService(req.RefreshToken)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "refresh token failed: %v", err)
+		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &auth.RefreshTokenResp{
