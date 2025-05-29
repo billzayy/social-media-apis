@@ -1,7 +1,8 @@
 package handlers
 
 import (
-	"time"
+	"context"
+	"log"
 
 	grpc "github.com/billzayy/social-media/back-end/user-service/api"
 	"github.com/billzayy/social-media/back-end/user-service/internal/models"
@@ -9,6 +10,8 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type GrpcServer struct {
@@ -16,17 +19,29 @@ type GrpcServer struct {
 	UserService *services.UserService
 }
 
-func NewPostGrpcServer(sv *services.Services) *GrpcServer {
+func NewUserGrpcServer(sv *services.Services) *GrpcServer {
 	return &GrpcServer{
 		UserService: sv.UserService,
 	}
 }
 
-func (uG *GrpcServer) GetUserById(req *grpc.ReqGetUser) (*grpc.RespGetUser, error) {
+func (uG *GrpcServer) GetUserById(ctx context.Context, req *grpc.ReqGetUser) (*grpc.RespGetUser, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in UpdateInfoUser")
+		}
+	}()
+
 	data, err := uG.UserService.GetUserService(req.Id)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to Get User : %v", err)
+	}
+
+	var protoBirthDate *timestamppb.Timestamp
+
+	if !data.BirthDate.IsZero() {
+		protoBirthDate = timestamppb.New(data.BirthDate)
 	}
 
 	result := &grpc.RespGetUser{
@@ -41,7 +56,7 @@ func (uG *GrpcServer) GetUserById(req *grpc.ReqGetUser) (*grpc.RespGetUser, erro
 		Description:    data.Description,
 		Location:       data.Location,
 		Website:        data.Website,
-		BirthDate:      data.BirthDate.String(),
+		BirthDate:      protoBirthDate,
 		Theme:          data.Theme,
 		Language:       data.Language,
 		Country:        data.Country,
@@ -50,12 +65,12 @@ func (uG *GrpcServer) GetUserById(req *grpc.ReqGetUser) (*grpc.RespGetUser, erro
 	return result, nil
 }
 
-func (uG *GrpcServer) UpdateInfoUser(req *grpc.ReqUpdateInfo) error {
-	birth, err := time.Parse(time.RFC3339, req.BirthDate)
-
-	if err != nil {
-		return status.Errorf(codes.Internal, "failed to convert time : %v", err)
-	}
+func (uG *GrpcServer) UpdateInfoUser(ctx context.Context, req *grpc.ReqUpdateInfo) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in UpdateInfoUser")
+		}
+	}()
 
 	input := models.ReqUpdateUser{
 		ID:             uuid.MustParse(req.Id),
@@ -66,22 +81,28 @@ func (uG *GrpcServer) UpdateInfoUser(req *grpc.ReqUpdateInfo) error {
 		Description:    req.Description,
 		Location:       req.Location,
 		Website:        req.Website,
-		BirthDate:      birth,
+		BirthDate:      req.BirthDate.AsTime(),
 		Theme:          req.Theme,
 		Language:       req.Language,
 		Country:        req.Country,
 	}
 
-	err = uG.UserService.UpdateUserService(input)
+	err := uG.UserService.UpdateUserService(input)
 
 	if err != nil {
-		return status.Errorf(codes.Internal, "failed to Update User : %v", err)
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
-	return nil
+	return &emptypb.Empty{}, nil
 }
 
-func (uG *GrpcServer) UpdatePassword(req *grpc.ReqUpdatePassword) error {
+func (uG *GrpcServer) UpdatePassword(ctx context.Context, req *grpc.ReqUpdatePassword) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered in UpdateInfoUser")
+		}
+	}()
+
 	input := models.ReqUpdatePassword{
 		ID:          uuid.MustParse(req.Id),
 		OldPassword: req.OldPassword,
@@ -91,8 +112,8 @@ func (uG *GrpcServer) UpdatePassword(req *grpc.ReqUpdatePassword) error {
 	err := uG.UserService.UpdatePasswordService(input)
 
 	if err != nil {
-		return status.Errorf(codes.Internal, "failed to update password : %v", err)
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
-	return nil
+	return &emptypb.Empty{}, nil
 }

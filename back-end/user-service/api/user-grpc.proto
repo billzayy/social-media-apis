@@ -5,6 +5,7 @@ package proto;
 option go_package = "github.com/billzayy/social-media/back-end/user-service/api";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 
 service UserService{
     rpc GetUserById(ReqGetUser) returns(RespGetUser);
@@ -28,7 +29,7 @@ message RespGetUser{
     string Description = 9;
     string Location = 10;
     repeated string Website = 11;
-    string BirthDate = 12;
+    google.protobuf.Timestamp BirthDate = 12;
     string Theme = 13;
     string Language = 14;
     string Country = 15;
@@ -43,7 +44,7 @@ message ReqUpdateInfo{
     string Description = 6;
     string Location = 7;
     repeated string Website = 8;
-    string BirthDate = 9;
+    google.protobuf.Timestamp BirthDate = 9;
     string Theme = 10;
     string Language = 11;
     string Country = 12; 

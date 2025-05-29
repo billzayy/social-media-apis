@@ -4,9 +4,11 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"time"
 
+	user "github.com/billzayy/social-media/back-end/user-service/api"
 	"github.com/billzayy/social-media/back-end/user-service/internal/db"
 	"github.com/billzayy/social-media/back-end/user-service/internal/db/repositories"
 	"github.com/billzayy/social-media/back-end/user-service/internal/handlers"
@@ -16,6 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -73,25 +76,32 @@ func main() {
 		r.Run(":" + os.Getenv("REST_PORT")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 
 	case *add == "deploy":
-		// grpcServer := grpc.NewServer()
+		grpcServer := grpc.NewServer()
 
-		// post.RegisterPostServiceServer(grpcServer, handlers.NewPostGrpcServer(
-		// 	services.NewServices(
-		// 		repositories.NewPostRepository(postgres, redis),
-		// 		repositories.NewInteractRepository(postgres, redis),
-		// 	),
-		// ))
+		user.RegisterUserServiceServer(grpcServer, handlers.NewUserGrpcServer(
+			services.NewServices(
+				repositories.NewUserRepository(postgres, redis),
+			),
+		))
 
-		// lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
+		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 
-		// if err != nil {
-		// 	log.Fatalf("failed to listen : %v", err)
-		// }
+		if err != nil {
+			log.Fatalf("failed to listen : %v", err)
+		}
 
-		// log.Printf("gRPC server started on :%v\n", os.Getenv("GRPC_PORT"))
-		// if err := grpcServer.Serve(lis); err != nil {
-		// 	log.Fatalf("failed to server : %v", err)
-		// }
+		log.Printf("gRPC server started on :%v\n", os.Getenv("GRPC_PORT"))
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("failed to server : %v", err)
+		}
+
+	case *add == "test-func":
+		birth, err := time.Parse(time.RFC3339, "0001-01-01T00:00:00Z")
+
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Println(birth)
 
 	default:
 		fmt.Println("Error command")

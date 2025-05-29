@@ -6,10 +6,10 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
-	userRoute := router.Group("/api/user")
+	userRoute := router.Group("/api/v1/user")
 	{
 		userRoute.GET("/get-user", h.UserHandler.GetUserByIdHandler)
-		userRoute.PATCH("/update", h.UserHandler.UpdateUserHandler)
+		userRoute.PATCH("/update-info", h.UserHandler.UpdateUserHandler)
 		userRoute.PATCH("/change-password", h.UserHandler.UpdatePasswordHandler)
 	}
 }
