@@ -10,8 +10,19 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
+	"github.com/billzayy/social-media/back-end/api-gateway/docs"
 )
 
+//	@title			Swagger Social Media CRUD API
+//	@version		1.0
+//	@description	This is an API Gateway Server.
+//	@BasePath		/
+//	@schemes		http https
+
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
 func main() {
 	err := godotenv.Load("./internal/.env")
 
@@ -20,6 +31,8 @@ func main() {
 			log.Fatalf("Error loading .env on Postgres")
 		}
 	}
+
+	docs.SwaggerInfo.Host = "localhost:" + os.Getenv("REST_PORT")
 
 	r := gin.New()
 

@@ -22,6 +22,18 @@ func NewAuthHandler(port string) *AuthHandler {
 	}
 }
 
+// Login User godoc
+//
+//	@Summary		Login User
+//	@Description	Login with username and password
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			userName	query		string	true	"User Name"
+//	@Param			password	query		string	true	"Password"
+//	@Success		200			{object}	models.SwaggerLoginResp
+//	@Failure		500			{object}	models.ResponseDataType
+//	@Router			/auth/login [post]
 func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 	userName := c.Query("userName")
 	password := c.Query("password")
@@ -54,18 +66,37 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 		Expires:  time.Now().Add(168 * time.Hour),
 		HttpOnly: true, // If set true, the Front-End Js can not get the cookie
 		Path:     "/",
-		SameSite: 4,
+		SameSite: 3,
 		Secure:   true,
 	})
 
-	// fmt.Println(resp)
-	models.Response(c, http.StatusOK, map[string]string{
-		"UserId": resp.UserId,
-		"Token":  resp.Token,
-		"Type":   resp.Type,
-	})
+	result := models.LoginResp{
+		Token:     resp.Token,
+		Type:      resp.Type,
+		ExpiresIn: resp.Expires,
+		User: models.LoginUserResp{
+			ID:             resp.User.Id,
+			FullName:       resp.User.FullName,
+			Email:          resp.User.Email,
+			ProfilePicture: resp.User.ProfilePicture,
+		},
+	}
+
+	models.Response(c, http.StatusOK, result)
 }
 
+// Register Account godoc
+//
+//	@Summary		Register Account
+//	@Description	Register User Account
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		models.SwaggerLoginReq	true	"Register Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/auth/register [post]
 func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 	server, client, err := repository.AuthRepo(aH.port)
 
@@ -107,6 +138,17 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 	models.Response(c, http.StatusCreated, "Account Created!")
 }
 
+// Refresh Token godoc
+//
+//	@Summary		Refresh Token
+//	@Description	Refresh Token API
+//	@Tags			authentication
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.ResponseDataType
+//	@Failure		400	{object}	models.ResponseDataType
+//	@Failure		500	{object}	models.ResponseDataType
+//	@Router			/auth/refresh-token [post]
 func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 	server, client, err := repository.AuthRepo(aH.port)
 
@@ -120,23 +162,41 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	var req *pb.RefreshTokenReq
+	getToken, err := c.Cookie("jwt")
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err != nil {
 		models.Response(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	resp, err := client.RefreshToken(ctx, req)
+	fmt.Println(getToken)
+
+	resp, err := client.RefreshToken(ctx, &pb.RefreshTokenReq{RefreshToken: getToken})
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	models.Response(c, http.StatusOK, map[string]string{
-		"UserId": resp.UserId,
-		"Token":  resp.Token,
-		"Type":   resp.Type,
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "jwt",
+		Value:    resp.Cookie,
+		Expires:  time.Now().Add(168 * time.Hour),
+		HttpOnly: true, // If set true, the Front-End Js can not get the cookie
+		Path:     "/",
+		SameSite: 3,
+		Secure:   true,
+	})
+
+	models.Response(c, http.StatusOK, models.RefreshTokenResp{
+		User: models.RefreshUserResp{
+			ID:             resp.User.Id,
+			FullName:       resp.User.FullName,
+			Email:          resp.User.Email,
+			ProfilePicture: resp.User.ProfilePicture,
+		},
+		Token:     resp.Token,
+		Type:      resp.Type,
+		ExpiresIn: resp.Expires,
 	})
 }

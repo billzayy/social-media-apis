@@ -4,9 +4,14 @@ import (
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/handlers"
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/middleware"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
+	// Access "http://localhost:{REST_PORT}/swagger/index.html"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	authV1 := router.Group("/auth")
 	{
 		authV1.POST("/login", h.AuthHandler.LoginHandler)

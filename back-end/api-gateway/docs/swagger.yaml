@@ -1,0 +1,168 @@
+basePath: /
+definitions:
+  models.LoginResp:
+    properties:
+      ExpiresIn:
+        type: integer
+      Token:
+        type: string
+      Type:
+        type: string
+      User:
+        $ref: '#/definitions/models.LoginUserResp'
+    type: object
+  models.LoginUserResp:
+    properties:
+      Email:
+        type: string
+      FullName:
+        type: string
+      ID:
+        type: string
+      ProfilePicture:
+        type: string
+    type: object
+  models.ResponseDataType:
+    properties:
+      data: {}
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  models.SwaggerLoginReq:
+    properties:
+      BirthDate:
+        type: string
+      Description:
+        type: string
+      Email:
+        type: string
+      FirstName:
+        type: string
+      Location:
+        type: string
+      Password:
+        type: string
+      SurName:
+        type: string
+      UserName:
+        type: string
+      Website:
+        items:
+          type: string
+        type: array
+    type: object
+  models.SwaggerLoginResp:
+    properties:
+      data:
+        $ref: '#/definitions/models.LoginResp'
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: This is an API Gateway Server.
+  title: Swagger Social Media CRUD API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with username and password
+      parameters:
+      - description: User Name
+        in: query
+        name: userName
+        required: true
+        type: string
+      - description: Password
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SwaggerLoginResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Login User
+      tags:
+      - authentication
+  /auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Refresh Token API
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - Cookie: []
+      summary: Refresh Token
+      tags:
+      - authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register User Account
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SwaggerLoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Register Account
+      tags:
+      - authentication
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  Cookie:
+    in: header
+    name: Cookie
+    type: apiKey
+swagger: "2.0"

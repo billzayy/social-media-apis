@@ -1,0 +1,256 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is an API Gateway Server.",
+        "title": "Swagger Social Media CRUD API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "description": "Login with username and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Login User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Name",
+                        "name": "userName",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password",
+                        "name": "password",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerLoginResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh-token": {
+            "post": {
+                "security": [
+                    {
+                        "Cookie": []
+                    }
+                ],
+                "description": "Refresh Token API",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Refresh Token",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "description": "Register User Account",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authentication"
+                ],
+                "summary": "Register Account",
+                "parameters": [
+                    {
+                        "description": "Register Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerLoginReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.LoginResp": {
+            "type": "object",
+            "properties": {
+                "ExpiresIn": {
+                    "type": "integer"
+                },
+                "Token": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "User": {
+                    "$ref": "#/definitions/models.LoginUserResp"
+                }
+            }
+        },
+        "models.LoginUserResp": {
+            "type": "object",
+            "properties": {
+                "Email": {
+                    "type": "string"
+                },
+                "FullName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "ProfilePicture": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ResponseDataType": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SwaggerLoginReq": {
+            "type": "object",
+            "properties": {
+                "BirthDate": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FirstName": {
+                    "type": "string"
+                },
+                "Location": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string"
+                },
+                "SurName": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "Website": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.SwaggerLoginResp": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.LoginResp"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "Cookie": {
+            "type": "apiKey",
+            "name": "Cookie",
+            "in": "header"
+        }
+    }
+}

@@ -6,6 +6,12 @@ DOCKER_COMPOSE_CMD=docker-compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENVIRON
 # Default target
 all: run-docker run-gateway
 
+doc: swagger run-gateway
+
+swagger:
+	@echo "Generate Swagger files ..."
+	swag init -g ./cmd/main.go -o docs
+
 run-gateway:
 	@echo "Running API Gateway..."
 	go run ./cmd/main.go
