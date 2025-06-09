@@ -7,7 +7,7 @@ DOCKER_CONTEXT=.
 .PHONY: build
 
 # Default target
-all: allow generate build run
+all: allow generate build
 
 docker: build push
 

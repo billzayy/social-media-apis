@@ -16,8 +16,23 @@ type User struct {
 	ProfilePicture string    `json:"ProfilePicture,omitempty"`
 }
 
-type UserToken struct {
-	UserId uuid.UUID `json:"ID"`
-	Token  string    `json:"Token"`
-	Type   string    `json:"Bearer"`
+type UserResponse struct {
+	User      GetUserData `json:"User"`
+	Token     string      `json:"Token"`
+	Type      string      `json:"Bearer"`
+	ExpiresIn int64       `json:"ExpiresIn"`
+}
+
+type GetUserData struct {
+	Id             string `json:"ID"`
+	FullName       string `json:"FullName"`
+	Email          string `json:"Email"`
+	ProfilePicture string `json:"ProfilePicture"`
+}
+
+type RefreshTokenResp struct {
+	User      GetUserData `json:"User"`
+	Token     string      `json:"Token"`
+	Type      string      `json:"Bearer"`
+	ExpiresIn int64       `json:"ExpiresIn"`
 }

@@ -55,16 +55,22 @@ func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.
 		}
 	}()
 
-	token, cookie, err := aG.AuthService.LoginService(req.GetUserName(), req.GetPassword())
+	data, cookie, err := aG.AuthService.LoginService(req.GetUserName(), req.GetPassword())
 	if err != nil {
 		return &auth.LoginResp{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &auth.LoginResp{
-		Token:  token.Token,
-		Type:   token.Type,
-		Cookie: cookie.Value,
-		UserId: token.UserId.String(),
+		Token:   data.Token,
+		Type:    data.Type,
+		Cookie:  cookie.Value,
+		Expires: data.ExpiresIn,
+		User: &auth.UserResp{
+			Id:             data.User.Id,
+			FullName:       data.User.FullName,
+			Email:          data.User.Email,
+			ProfilePicture: data.User.ProfilePicture,
+		},
 	}, nil
 }
 
@@ -75,15 +81,21 @@ func (aG *AuthGrpcServer) RefreshToken(ctx context.Context, req *auth.RefreshTok
 		}
 	}()
 
-	userId, newToken, cookie, err := aG.AuthService.RefreshTokenService(req.RefreshToken)
+	userData, newToken, expires, cookie, err := aG.AuthService.RefreshTokenService(req.RefreshToken)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return &auth.RefreshTokenResp{
-		Token:  newToken,
-		Type:   "Bearer",
-		Cookie: cookie.Value,
-		UserId: userId,
+		Token:   newToken,
+		Type:    "Bearer",
+		Cookie:  cookie.Value,
+		Expires: expires,
+		User: &auth.UserResp{
+			Id:             userData.Id,
+			FullName:       userData.FullName,
+			Email:          userData.Email,
+			ProfilePicture: userData.ProfilePicture,
+		},
 	}, nil
 }

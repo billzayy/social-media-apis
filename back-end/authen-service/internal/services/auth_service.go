@@ -49,71 +49,91 @@ func (as *AuthService) RegisterService(request models.RegisterRequest) (bool, er
 	return true, nil
 }
 
-func (as *AuthService) LoginService(userName string, password string) (models.UserToken, http.Cookie, error) {
+func (as *AuthService) LoginService(userName string, password string) (models.UserResponse, http.Cookie, error) {
 	ctx := context.Background()
 
 	hashed, err := as.AuthRepository.GetHashedPassword(userName)
 
 	if err != nil {
-		fmt.Println(hashed)
-		return models.UserToken{}, http.Cookie{}, err
+		return models.UserResponse{}, http.Cookie{}, err
 	}
 
 	valid, err := middleware.ValidatePassword(password, hashed)
 
 	if err != nil {
-		return models.UserToken{}, http.Cookie{}, fmt.Errorf("wrong password")
+		return models.UserResponse{}, http.Cookie{}, fmt.Errorf("wrong password")
 	}
 
 	if !valid {
-		return models.UserToken{}, http.Cookie{}, fmt.Errorf("invalid")
+		return models.UserResponse{}, http.Cookie{}, fmt.Errorf("invalid")
 	}
 
-	userId, err := as.AuthRepository.GetUserId(userName, hashed)
+	data, err := as.AuthRepository.GetUser(userName, hashed)
 
 	if err != nil {
-		return models.UserToken{}, http.Cookie{}, err
+		return models.UserResponse{}, http.Cookie{}, err
 	}
 
-	if uuid.MustParse(userId) == uuid.Nil {
-		return models.UserToken{}, http.Cookie{}, fmt.Errorf("not found account")
+	if uuid.MustParse(data.Id) == uuid.Nil {
+		return models.UserResponse{}, http.Cookie{}, fmt.Errorf("not found account")
 	}
 
-	accessToken, cookie, err := middleware.GenerateTokens(userId)
+	accessToken, expires, cookie, err := middleware.GenerateTokens(data.Id)
 
 	if err != nil {
-		return models.UserToken{}, http.Cookie{}, err
+		return models.UserResponse{}, http.Cookie{}, err
 	}
 
-	err = as.AuthRepository.SaveUserRedis(ctx, userId, accessToken)
+	errChan := make(chan error, 2) // Make a slice of channels
 
-	if err != nil {
-		return models.UserToken{}, http.Cookie{}, err
+	// The Concurrency reduces 200ms of calling API
+	go func() { // Concurrency
+		errChan <- as.AuthRepository.SaveUserRedis(ctx, data.Id, accessToken)
+	}()
+
+	go func() { // Concurrency
+		errChan <- as.AuthRepository.UpdateLoginTime(data.Id)
+	}()
+
+	for range 2 {
+		if err := <-errChan; err != nil {
+			return models.UserResponse{}, http.Cookie{}, err
+		}
 	}
 
-	return models.UserToken{UserId: uuid.MustParse(userId), Token: accessToken, Type: "Bearer"}, cookie, nil
+	return models.UserResponse{User: data, Token: accessToken, Type: "Bearer", ExpiresIn: expires}, cookie, nil
 }
 
-func (as *AuthService) RefreshTokenService(cookieToken string) (string, string, http.Cookie, error) {
+func (as *AuthService) RefreshTokenService(cookieToken string) (models.GetUserData, string, int64, http.Cookie, error) {
 	ctx := context.Background()
 
 	userId, err := middleware.VerifyToken(cookieToken, "REFRESH_TOKEN_KEY")
 
 	if err != nil {
-		return "", "", http.Cookie{}, err
+		return models.GetUserData{}, "", 0, http.Cookie{}, err
 	}
 
-	newToken, cookie, err := middleware.GenerateTokens(userId)
+	newToken, expires, cookie, err := middleware.GenerateTokens(userId)
 
 	if err != nil {
-		return "", "", http.Cookie{}, err
+		return models.GetUserData{}, "", expires, http.Cookie{}, err
 	}
 
-	err = as.AuthRepository.SaveUserRedis(ctx, userId, newToken)
+	data, err := as.AuthRepository.GetUserById(userId)
 
 	if err != nil {
-		return "", "", http.Cookie{}, err
+		return models.GetUserData{}, "", expires, http.Cookie{}, err
 	}
 
-	return userId, newToken, cookie, nil
+	errChan := make(chan error, 1)
+
+	go func() { // Concurrency
+		errChan <- as.AuthRepository.SaveUserRedis(ctx, userId, newToken)
+	}()
+
+	if err := <-errChan; err != nil {
+		return models.GetUserData{}, "", expires, http.Cookie{}, err
+	}
+
+	return data, newToken, expires, cookie, nil
 }

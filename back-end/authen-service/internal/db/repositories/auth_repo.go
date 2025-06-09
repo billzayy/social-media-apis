@@ -33,12 +33,10 @@ func NewAuthRepository(db *sql.DB, rdb *redis.Client) *AuthRepository {
 
 // * Add User Function
 func (ar *AuthRepository) AddUser(userName string, fullName string, email string, pass string) error {
-	query := fmt.Sprintf(`INSERT INTO public."Users" 
-	("UserName", "FullName", "Email", "Password", "LastLogin") 
-	VALUES ('%s', '%s', '%s', '%s', '%s')`,
-		userName, fullName, email, pass, time.DateTime)
+	query := `INSERT INTO public."Users" ("UserName", "FullName", "Email", "Password", "LastLogin") 
+	VALUES ($1,$2,$3,$4,$5)`
 
-	_, err := ar.db.Exec(query)
+	_, err := ar.db.Exec(query, userName, fullName, email, pass, time.Now())
 
 	if err != nil {
 		return err
@@ -47,34 +45,80 @@ func (ar *AuthRepository) AddUser(userName string, fullName string, email string
 	return nil
 }
 
-// * GetUserId Function
-func (ar *AuthRepository) GetUserId(userName string, hashedPassword string) (string, error) {
-	query := fmt.Sprintf(`SELECT u."ID" FROM public."Users" u 
-	WHERE u."UserName" = '%s' AND u."Password" = '%s'`, userName, hashedPassword)
+func (ar *AuthRepository) GetUser(userName string, hashedPassword string) (models.GetUserData, error) {
+	query := `SELECT u."ID", u."FullName", u."Email", u."ProfilePicture" FROM public."Users" u 
+	WHERE u."UserName" = $1 AND u."Password" = $2`
 
-	rows, err := ar.db.Query(query)
+	rows, err := ar.db.Query(query, userName, hashedPassword)
 
 	if err != nil {
-		return "", err
+		return models.GetUserData{}, err
 	}
 	defer rows.Close()
 
-	var userId string
+	var data models.GetUserData
+	var profilePicture sql.NullString
+
 	for rows.Next() {
-		err = rows.Scan(&userId)
+		err = rows.Scan(&data.Id, &data.FullName, &data.Email, &profilePicture)
 		if err != nil {
-			return "", err
+			return models.GetUserData{}, err
+		}
+
+		if profilePicture.Valid {
+			data.ProfilePicture = profilePicture.String
 		}
 	}
 
-	return userId, nil
+	return data, nil
+}
+
+func (ar *AuthRepository) GetUserById(id string) (models.GetUserData, error) {
+	query := `SELECT u."ID", u."FullName", u."Email", u."ProfilePicture" FROM public."Users" u 
+	WHERE u."ID" = $1`
+
+	rows, err := ar.db.Query(query, id)
+
+	if err != nil {
+		return models.GetUserData{}, err
+	}
+	defer rows.Close()
+
+	var data models.GetUserData
+	var profilePicture sql.NullString
+
+	for rows.Next() {
+		err = rows.Scan(&data.Id, &data.FullName, &data.Email, &profilePicture)
+		if err != nil {
+			return models.GetUserData{}, err
+		}
+
+		if profilePicture.Valid {
+			data.ProfilePicture = profilePicture.String
+		}
+	}
+
+	return data, nil
+}
+
+func (ar *AuthRepository) UpdateLoginTime(id string) error {
+	query := `UPDATE public."Users" SET "LastLogin" = $1 WHERE "ID" = $2`
+
+	timeNow := time.Now()
+
+	_, err := ar.db.Exec(query, timeNow, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (ar *AuthRepository) GetHashedPassword(userName string) (string, error) {
-	query := fmt.Sprintf(`SELECT "Password" FROM public."Users" 
-	WHERE "UserName" = '%s' OR "Email" = '%s'`, userName, userName)
+	query := `SELECT "Password" FROM public."Users" WHERE "UserName" = $1 OR "Email" = $2`
 
-	rows, err := ar.db.Query(query)
+	rows, err := ar.db.Query(query, userName, userName)
 
 	defer rows.Close()
 

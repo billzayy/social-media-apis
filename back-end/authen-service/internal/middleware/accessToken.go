@@ -7,11 +7,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func AccessToken(userId string) (string, error) {
+func AccessToken(userId string) (string, int64, error) {
 	secretKey := []byte(os.Getenv("ACCESS_TOKEN_KEY"))
 
 	//? Set token expiration
 	expirationTime := time.Now().Add(time.Hour * 24)
+	expirationIn := int64(time.Until(expirationTime).Seconds())
 
 	//? Create the JWT claims
 	claims := jwt.RegisteredClaims{
@@ -26,8 +27,8 @@ func AccessToken(userId string) (string, error) {
 	accessString, err := token.SignedString(secretKey)
 
 	if err != nil {
-		return "", nil
+		return "", expirationIn, nil
 	}
 
-	return accessString, nil
+	return accessString, expirationIn, nil
 }

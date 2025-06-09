@@ -4,18 +4,18 @@ import (
 	"net/http"
 )
 
-func GenerateTokens(userId string) (string, http.Cookie, error) {
-	accessToken, err := AccessToken(userId)
+func GenerateTokens(userId string) (string, int64, http.Cookie, error) {
+	accessToken, expiresIn, err := AccessToken(userId)
 
 	if err != nil {
-		return "", http.Cookie{}, err
+		return "", expiresIn, http.Cookie{}, err
 	}
 
 	cookie, err := RefreshToken(userId)
 
 	if err != nil {
-		return "", http.Cookie{}, err
+		return "", expiresIn, http.Cookie{}, err
 	}
 
-	return accessToken, cookie, nil
+	return accessToken, expiresIn, cookie, nil
 }

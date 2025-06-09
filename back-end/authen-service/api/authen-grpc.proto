@@ -34,10 +34,18 @@ message LoginReq{
 }
 
 message LoginResp{
-    string UserId = 1;
+    UserResp User = 1;
     string Token = 2;
     string Cookie = 3;
     string Type = 4;
+    int64 Expires= 5;
+}
+
+message UserResp{
+    string Id = 1;
+    string FullName = 2;
+    string Email = 3;
+    string ProfilePicture = 4;
 }
 
 // RefreshToken Req & Resp
@@ -46,8 +54,9 @@ message RefreshTokenReq{
 }
 
 message RefreshTokenResp{
-    string UserId = 1;
+    UserResp User = 1;
     string Token = 2;
     string Cookie = 3;
     string Type = 4;
+    int64 Expires = 5;
 }

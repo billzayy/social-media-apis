@@ -28,7 +28,7 @@ func RefreshToken(userId string) (http.Cookie, error) {
 		Value:    refreshString,
 		Expires:  expirationTime,
 		HttpOnly: true, // If set true, the Front-End Js can not get the cookie
-		Path:     "/auth",
+		Path:     "/",
 		SameSite: 3,
 	}
 

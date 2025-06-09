@@ -6,7 +6,6 @@ import (
 	"github.com/billzayy/social-media/back-end/authen-service/internal/models"
 	"github.com/billzayy/social-media/back-end/authen-service/internal/services"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type AuthHandler struct {
@@ -65,7 +64,7 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	userId, newToken, cookie, err := aH.AuthService.RefreshTokenService(getToken)
+	userData, newToken, expires, cookie, err := aH.AuthService.RefreshTokenService(getToken)
 
 	if err != nil {
 		models.ResponseUser(c, http.StatusInternalServerError, err.Error())
@@ -75,9 +74,10 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 	http.SetCookie(c.Writer, &cookie)
 
 	// Return like LoginHandler
-	models.ResponseUser(c, http.StatusOK, models.UserToken{
-		UserId: uuid.MustParse(userId),
-		Token:  newToken,
-		Type:   "Bearer",
+	models.ResponseUser(c, http.StatusOK, models.RefreshTokenResp{
+		User:      userData,
+		Token:     newToken,
+		Type:      "Bearer",
+		ExpiresIn: expires,
 	})
 }
