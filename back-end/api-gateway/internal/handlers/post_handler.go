@@ -23,6 +23,16 @@ func NewPostHandler(port string) *PostHandler {
 	}
 }
 
+// GetPost godoc
+//
+//	@Summary		Get Post
+//	@Description	Get Post without request
+//	@Tags			post
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	models.SwaggerPostResp
+//	@Failure		500	{object}	models.ResponseDataType
+//	@Router			/api/v1/post/get-post [get]
 func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 	server, client, err := repository.PostRepo(pH.port)
 
@@ -44,10 +54,22 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 		return
 	}
 
-	// fmt.Println(resp)
 	models.Response(c, http.StatusOK, resp)
 }
 
+// AddPost godoc
+//
+//	@Summary		Add Post
+//	@Description	Add Post with request and token
+//	@Tags			post
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			request	body		models.SwaggerPostReq	true	"Add Post Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/post/add-post [post]
 func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 	server, client, err := repository.PostRepo(pH.port)
 
@@ -74,6 +96,19 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 	models.Response(c, http.StatusCreated, resp)
 }
 
+// DeletePost godoc
+//
+//	@Summary		Delete Post
+//	@Description	Delete Post with request and token
+//	@Tags			post
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			id	query		string	true	"User Id"
+//	@Success		200	{object}	models.ResponseDataType
+//	@Failure		400	{object}	models.ResponseDataType
+//	@Failure		500	{object}	models.ResponseDataType
+//	@Router			/api/v1/post/delete-post [delete]
 func (pH *PostHandler) DeletePostHandler(c *gin.Context) {
 	server, client, err := repository.PostRepo(pH.port)
 

@@ -22,6 +22,19 @@ func NewInteractHandler(port string) *InteractHandler {
 	}
 }
 
+// Check Like godoc
+//
+//	@Summary		Check Like
+//	@Description	Check Like with request and token
+//	@Tags			interact
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			request	body		models.LikeRequest	true	"Like Check Request"
+//	@Success		200		{object}	models.SwaggerLikeResp
+//	@Failure		404		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/interact/check-like [post]
 func (iH *InteractHandler) CheckLikeHandler(c *gin.Context) {
 	server, client, input, err := utils.LikeRepoAndGetRequest(c, iH.port)
 
@@ -45,6 +58,19 @@ func (iH *InteractHandler) CheckLikeHandler(c *gin.Context) {
 	models.Response(c, http.StatusOK, true)
 }
 
+// Add Like godoc
+//
+//	@Summary		Add Like
+//	@Description	Add Like with request and token
+//	@Tags			interact
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			request	body		models.LikeRequest	true	"Like Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/interact/add-like [post]
 func (iH *InteractHandler) AddLikeHandler(c *gin.Context) {
 	server, client, input, err := utils.LikeRepoAndGetRequest(c, iH.port)
 
@@ -63,6 +89,19 @@ func (iH *InteractHandler) AddLikeHandler(c *gin.Context) {
 	models.Response(c, http.StatusCreated, "Add Success")
 }
 
+// Delete Like godoc
+//
+//	@Summary		Delete Like
+//	@Description	Delete Like with request and token
+//	@Tags			interact
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			request	body		models.LikeRequest	true	"Like Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/interact/delete-like [delete]
 func (iH *InteractHandler) RemoveLikeHandler(c *gin.Context) {
 	server, client, input, err := utils.LikeRepoAndGetRequest(c, iH.port)
 
@@ -81,6 +120,19 @@ func (iH *InteractHandler) RemoveLikeHandler(c *gin.Context) {
 	models.Response(c, http.StatusOK, "Delete Success")
 }
 
+// Add Comment godoc
+//
+//	@Summary		Add Comment
+//	@Description	Add Comment with request and token
+//	@Tags			interact
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			request	body		models.CommentRequest	true	"Comment Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/interact/add-comment [post]
 func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 	server, client, err := repository.PostRepo(iH.port)
 
@@ -90,6 +142,8 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 	defer server.Close()
 
 	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	var req models.CommentRequest
@@ -115,6 +169,19 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 	models.Response(c, http.StatusCreated, "Comment Created")
 }
 
+// Delete Comment godoc
+//
+//	@Summary		Delete Comment
+//	@Description	Delete Comment with request and token
+//	@Tags			interact
+//	@Accept			json
+//	@Produce		json
+//	@Secure			BearerAuth
+//	@Param			id	query		string	true	"Id Request"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/interact/delete-comment [delete]
 func (iH *InteractHandler) DeleteCommentHandler(c *gin.Context) {
 	server, client, err := repository.PostRepo(iH.port)
 

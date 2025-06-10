@@ -1,5 +1,21 @@
 basePath: /
 definitions:
+  models.CommentRequest:
+    properties:
+      comment:
+        type: string
+      postId:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.LikeRequest:
+    properties:
+      postId:
+        type: string
+      userId:
+        type: string
+    type: object
   models.LoginResp:
     properties:
       ExpiresIn:
@@ -22,9 +38,48 @@ definitions:
       ProfilePicture:
         type: string
     type: object
+  models.PostMedia:
+    properties:
+      postId:
+        type: string
+      type:
+        type: string
+      url:
+        type: string
+    type: object
+  models.PostResp:
+    properties:
+      comments:
+        type: integer
+      content:
+        type: string
+      createdAt:
+        type: string
+      likes:
+        type: integer
+      media:
+        items:
+          $ref: '#/definitions/models.PostMedia'
+        type: array
+      postId:
+        type: string
+      shares:
+        type: integer
+      userId:
+        $ref: '#/definitions/models.Users'
+    type: object
   models.ResponseDataType:
     properties:
       data: {}
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  models.SwaggerLikeResp:
+    properties:
+      data:
+        type: boolean
       message:
         type: string
       statusCode:
@@ -62,12 +117,266 @@ definitions:
       statusCode:
         type: integer
     type: object
+  models.SwaggerPostReq:
+    properties:
+      content:
+        type: string
+      userId:
+        type: string
+    type: object
+  models.SwaggerPostResp:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.PostResp'
+        type: array
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  models.Users:
+    properties:
+      ID:
+        type: string
+      fullName:
+        type: string
+      profilePicture:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is an API Gateway Server.
   title: Swagger Social Media CRUD API
   version: "1.0"
 paths:
+  /api/v1/interact/add-comment:
+    post:
+      consumes:
+      - application/json
+      description: Add Comment with request and token
+      parameters:
+      - description: Comment Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Add Comment
+      tags:
+      - interact
+  /api/v1/interact/add-like:
+    post:
+      consumes:
+      - application/json
+      description: Add Like with request and token
+      parameters:
+      - description: Like Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Add Like
+      tags:
+      - interact
+  /api/v1/interact/check-like:
+    post:
+      consumes:
+      - application/json
+      description: Check Like with request and token
+      parameters:
+      - description: Like Check Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SwaggerLikeResp'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Check Like
+      tags:
+      - interact
+  /api/v1/interact/delete-comment:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Comment with request and token
+      parameters:
+      - description: Id Request
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Delete Comment
+      tags:
+      - interact
+  /api/v1/interact/delete-like:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Like with request and token
+      parameters:
+      - description: Like Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.LikeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Delete Like
+      tags:
+      - interact
+  /api/v1/post/add-post:
+    post:
+      consumes:
+      - application/json
+      description: Add Post with request and token
+      parameters:
+      - description: Add Post Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SwaggerPostReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Add Post
+      tags:
+      - post
+  /api/v1/post/delete-post:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Post with request and token
+      parameters:
+      - description: User Id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Delete Post
+      tags:
+      - post
+  /api/v1/post/get-post:
+    get:
+      consumes:
+      - application/json
+      description: Get Post without request
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SwaggerPostResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      summary: Get Post
+      tags:
+      - post
   /auth/login:
     post:
       consumes:
@@ -118,8 +427,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
-      security:
-      - Cookie: []
       summary: Refresh Token
       tags:
       - authentication
@@ -160,9 +467,5 @@ securityDefinitions:
   BearerAuth:
     in: header
     name: Authorization
-    type: apiKey
-  Cookie:
-    in: header
-    name: Cookie
     type: apiKey
 swagger: "2.0"

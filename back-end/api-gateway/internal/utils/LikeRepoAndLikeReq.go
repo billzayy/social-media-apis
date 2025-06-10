@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"net/http"
+
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/models"
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/repository"
 	"github.com/billzayy/social-media/back-end/post-service/api"
@@ -18,6 +20,7 @@ func LikeRepoAndGetRequest(c *gin.Context, port string) (*grpc.ClientConn, api.P
 	var req models.LikeRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+		models.Response(c, http.StatusBadRequest, err.Error())
 		return server, client, &api.LikeRequest{}, err
 	}
 
