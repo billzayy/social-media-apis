@@ -21,6 +21,8 @@ func NewPostService(pr *repositories.PostRepository) *PostService {
 
 func (pS *PostService) CreatePost(req models.AddPostRequest) (bool, error) {
 	ctx := context.Background()
+	var fail error
+
 	if req.Content == "" {
 		return false, fmt.Errorf("content can not empty")
 	}
@@ -37,10 +39,18 @@ func (pS *PostService) CreatePost(req models.AddPostRequest) (bool, error) {
 		return false, err
 	}
 
-	err = pS.PostRepository.AddPostRedis(ctx, data[0])
+	go func() {
+		err = pS.PostRepository.AddPostRedis(ctx, data[0])
 
-	if err != nil {
-		return false, err
+		if err != nil {
+			fail = err
+			return
+		}
+		fail = nil
+	}()
+
+	if fail != nil {
+		return false, fail
 	}
 
 	return true, nil
