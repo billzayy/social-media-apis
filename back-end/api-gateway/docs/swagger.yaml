@@ -68,6 +68,44 @@ definitions:
       userId:
         $ref: '#/definitions/models.Users'
     type: object
+  models.ReqUpdatePassword:
+    properties:
+      ID:
+        type: string
+      NewPassword:
+        type: string
+      OldPassword:
+        type: string
+    type: object
+  models.ReqUpdateUser:
+    properties:
+      BirthDate:
+        type: string
+      Country:
+        type: string
+      Description:
+        type: string
+      Email:
+        type: string
+      FullName:
+        type: string
+      ID:
+        type: string
+      Language:
+        type: string
+      Location:
+        type: string
+      ProfilePicture:
+        type: string
+      Theme:
+        type: string
+      UserName:
+        type: string
+      Website:
+        items:
+          type: string
+        type: array
+    type: object
   models.ResponseDataType:
     properties:
       data: {}
@@ -75,6 +113,41 @@ definitions:
         type: string
       statusCode:
         type: integer
+    type: object
+  models.ResponseUser:
+    properties:
+      Active:
+        type: boolean
+      BirthDate:
+        type: string
+      Country:
+        type: string
+      Description:
+        type: string
+      Email:
+        type: string
+      FullName:
+        type: string
+      ID:
+        type: string
+      Language:
+        type: string
+      LastLogin:
+        type: string
+      Location:
+        type: string
+      ProfilePicture:
+        type: string
+      Theme:
+        type: string
+      UserName:
+        type: string
+      UserSince:
+        type: string
+      Website:
+        items:
+          type: string
+        type: array
     type: object
   models.SwaggerLikeResp:
     properties:
@@ -135,6 +208,15 @@ definitions:
       statusCode:
         type: integer
     type: object
+  models.SwaggerUserResp:
+    properties:
+      data:
+        $ref: '#/definitions/models.ResponseUser'
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
   models.Users:
     properties:
       ID:
@@ -177,6 +259,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Add Comment
       tags:
       - interact
@@ -207,6 +291,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Add Like
       tags:
       - interact
@@ -237,6 +323,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Check Like
       tags:
       - interact
@@ -266,6 +354,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Delete Comment
       tags:
       - interact
@@ -296,6 +386,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Delete Like
       tags:
       - interact
@@ -326,6 +418,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Add Post
       tags:
       - post
@@ -355,6 +449,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
       summary: Delete Post
       tags:
       - post
@@ -377,6 +473,97 @@ paths:
       summary: Get Post
       tags:
       - post
+  /api/v1/user/change-password:
+    patch:
+      consumes:
+      - application/json
+      description: Update Password with request and token
+      parameters:
+      - description: Request Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqUpdatePassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Update Password
+      tags:
+      - user
+  /api/v1/user/get-user:
+    get:
+      consumes:
+      - application/json
+      description: Get User with Request Id
+      parameters:
+      - description: User Id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SwaggerUserResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Get User By Id
+      tags:
+      - user
+  /api/v1/user/update-info:
+    patch:
+      consumes:
+      - application/json
+      description: Update User with request and token
+      parameters:
+      - description: Request Update User
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ReqUpdateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Update User
+      tags:
+      - user
   /auth/login:
     post:
       consumes:

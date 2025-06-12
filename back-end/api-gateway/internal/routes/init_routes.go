@@ -9,9 +9,6 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
-	// Access "http://localhost:{REST_PORT}/swagger/index.html"
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	authV1 := router.Group("/auth")
 	{
 		authV1.POST("/login", h.AuthHandler.LoginHandler)
@@ -42,4 +39,7 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 		user.PATCH("/update-info", h.UserHandler.UpdateUserHandler)
 		user.PATCH("/change-password", h.UserHandler.UpdatePasswordHandler)
 	}
+
+	// Access "http://localhost:{REST_PORT}/swagger/index.html"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

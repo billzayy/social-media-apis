@@ -22,6 +22,18 @@ func NewUserHandler(port string) *UserHandler {
 	}
 }
 
+// Get User By Id godoc
+//
+//	@Summary		Get User By Id
+//	@Description	Get User with Request Id
+//	@Security		BearerAuth
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	query		string	true	"User Id"
+//	@Success		200	{object}	models.SwaggerUserResp
+//	@Failure		500	{object}	models.ResponseDataType
+//	@Router			/api/v1/user/get-user [get]
 func (uH *UserHandler) GetUserByIdHandler(c *gin.Context) {
 	id := c.Query("id")
 
@@ -47,6 +59,19 @@ func (uH *UserHandler) GetUserByIdHandler(c *gin.Context) {
 	models.Response(c, http.StatusOK, resp)
 }
 
+// Update User godoc
+//
+//	@Summary		Update User
+//	@Description	Update User with request and token
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		models.ReqUpdateUser	true	"Request Update User"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/user/update-info [patch]
 func (uH *UserHandler) UpdateUserHandler(c *gin.Context) {
 	var req models.ReqUpdateUser
 
@@ -97,6 +122,19 @@ func (uH *UserHandler) UpdateUserHandler(c *gin.Context) {
 	models.Response(c, http.StatusOK, "Updated User")
 }
 
+// Update Password godoc
+//
+//	@Summary		Update Password
+//	@Description	Update Password with request and token
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Security		BearerAuth
+//	@Param			request	body		models.ReqUpdatePassword	true	"Request Password"
+//	@Success		200		{object}	models.ResponseDataType
+//	@Failure		400		{object}	models.ResponseDataType
+//	@Failure		500		{object}	models.ResponseDataType
+//	@Router			/api/v1/user/change-password [patch]
 func (uH *UserHandler) UpdatePasswordHandler(c *gin.Context) {
 	var req models.ReqUpdatePassword
 

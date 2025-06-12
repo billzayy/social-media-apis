@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/v1/interact/add-comment": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add Comment with request and token",
                 "consumes": [
                     "application/json"
@@ -63,6 +68,11 @@ const docTemplate = `{
         },
         "/api/v1/interact/add-like": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add Like with request and token",
                 "consumes": [
                     "application/json"
@@ -109,6 +119,11 @@ const docTemplate = `{
         },
         "/api/v1/interact/check-like": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Check Like with request and token",
                 "consumes": [
                     "application/json"
@@ -155,6 +170,11 @@ const docTemplate = `{
         },
         "/api/v1/interact/delete-comment": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete Comment with request and token",
                 "consumes": [
                     "application/json"
@@ -199,6 +219,11 @@ const docTemplate = `{
         },
         "/api/v1/interact/delete-like": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete Like with request and token",
                 "consumes": [
                     "application/json"
@@ -245,6 +270,11 @@ const docTemplate = `{
         },
         "/api/v1/post/add-post": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Add Post with request and token",
                 "consumes": [
                     "application/json"
@@ -291,6 +321,11 @@ const docTemplate = `{
         },
         "/api/v1/post/delete-post": {
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Delete Post with request and token",
                 "consumes": [
                     "application/json"
@@ -351,6 +386,151 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.SwaggerPostResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/change-password": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update Password with request and token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update Password",
+                "parameters": [
+                    {
+                        "description": "Request Password",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqUpdatePassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/get-user": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get User with Request Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get User By Id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User Id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerUserResp"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/user/update-info": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update User with request and token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Update User",
+                "parameters": [
+                    {
+                        "description": "Request Update User",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ReqUpdateUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
                         }
                     },
                     "500": {
@@ -595,6 +775,64 @@ const docTemplate = `{
                 }
             }
         },
+        "models.ReqUpdatePassword": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "string"
+                },
+                "NewPassword": {
+                    "type": "string"
+                },
+                "OldPassword": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ReqUpdateUser": {
+            "type": "object",
+            "properties": {
+                "BirthDate": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FullName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Language": {
+                    "type": "string"
+                },
+                "Location": {
+                    "type": "string"
+                },
+                "ProfilePicture": {
+                    "type": "string"
+                },
+                "Theme": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "Website": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "models.ResponseDataType": {
             "type": "object",
             "properties": {
@@ -604,6 +842,59 @@ const docTemplate = `{
                 },
                 "statusCode": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.ResponseUser": {
+            "type": "object",
+            "properties": {
+                "Active": {
+                    "type": "boolean"
+                },
+                "BirthDate": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "FullName": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Language": {
+                    "type": "string"
+                },
+                "LastLogin": {
+                    "type": "string"
+                },
+                "Location": {
+                    "type": "string"
+                },
+                "ProfilePicture": {
+                    "type": "string"
+                },
+                "Theme": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "UserSince": {
+                    "type": "string"
+                },
+                "Website": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -689,6 +980,20 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/models.PostResp"
                     }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.SwaggerUserResp": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/models.ResponseUser"
                 },
                 "message": {
                     "type": "string"

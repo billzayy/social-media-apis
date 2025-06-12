@@ -14,15 +14,14 @@ import (
 	"github.com/billzayy/social-media/back-end/api-gateway/docs"
 )
 
-//	@title			Swagger Social Media CRUD API
-//	@version		1.0
-//	@description	This is an API Gateway Server.
-//	@BasePath		/
-//	@schemes		http https
-
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
+//	@title						Swagger Social Media CRUD API
+//	@version					1.0
+//	@description				This is an API Gateway Server.
+//	@BasePath					/
+//	@schemes					http https
+//	@securityDefinitions.apikey	BearerAuth
+//	@in							header
+//	@name						Authorization
 func main() {
 	err := godotenv.Load("./internal/.env")
 

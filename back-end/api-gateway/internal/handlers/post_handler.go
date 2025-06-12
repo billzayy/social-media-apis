@@ -47,14 +47,15 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := client.GetPost(ctx, &emptypb.Empty{})
+	data, err := client.GetPost(ctx, &emptypb.Empty{})
+
 	if err != nil {
 		fmt.Println(err)
 		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	models.Response(c, http.StatusOK, resp)
+	models.Response(c, http.StatusOK, data)
 }
 
 // AddPost godoc
@@ -64,7 +65,7 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 //	@Tags			post
 //	@Accept			json
 //	@Produce		json
-//	@Secure			BearerAuth
+//	@Security		BearerAuth
 //	@Param			request	body		models.SwaggerPostReq	true	"Add Post Request"
 //	@Success		200		{object}	models.ResponseDataType
 //	@Failure		400		{object}	models.ResponseDataType
@@ -103,7 +104,7 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 //	@Tags			post
 //	@Accept			json
 //	@Produce		json
-//	@Secure			BearerAuth
+//	@Security		BearerAuth
 //	@Param			id	query		string	true	"User Id"
 //	@Success		200	{object}	models.ResponseDataType
 //	@Failure		400	{object}	models.ResponseDataType
