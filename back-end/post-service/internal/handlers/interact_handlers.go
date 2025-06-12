@@ -6,7 +6,6 @@ import (
 	"github.com/billzayy/social-media/back-end/post-service/internal/models"
 	"github.com/billzayy/social-media/back-end/post-service/internal/services"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type InteractHandler struct {
@@ -96,14 +95,14 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 }
 
 func (iH *InteractHandler) DeleteCommentHandler(c *gin.Context) {
-	id := c.Query("id")
+	var req models.DeleteCommentReq
 
-	if id == "" {
-		models.Response(c, http.StatusBadRequest, "Id must not empty!")
+	if err := c.ShouldBindJSON(&req); err != nil {
+		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
-	err := iH.InteractService.DeleteCommentService(uuid.MustParse(id))
+	err := iH.InteractService.DeleteCommentService(req)
 
 	if err != nil && err.Error() == "not found" {
 		models.Response(c, http.StatusNotFound, "Not found comment")

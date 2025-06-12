@@ -170,16 +170,3 @@ func (iR *InteractRepository) UpdateInteractRedis(ctx context.Context, index int
 
 	return nil
 }
-
-func (iR *InteractRepository) RemoveInteractRedis(ctx context.Context, index int) error {
-	key := "posts"
-	path := fmt.Sprintf("$[%d]", index) // Remove element at this index
-
-	_, err := iR.rdb.Do(ctx, "JSON.DEL", key, path).Result()
-	if err != nil {
-		log.Printf("Failed to delete post at index %d: %v", index, err)
-		return err
-	}
-
-	return nil
-}

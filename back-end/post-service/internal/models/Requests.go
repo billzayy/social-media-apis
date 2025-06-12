@@ -18,3 +18,8 @@ type CommentRequest struct {
 	PostId  uuid.UUID `json:"postId"`
 	Comment string    `json:"comment"`
 }
+
+type DeleteCommentReq struct {
+	Id     uuid.UUID `json:"Id"`
+	PostId uuid.UUID `json:"postId"`
+}

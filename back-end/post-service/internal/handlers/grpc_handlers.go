@@ -239,7 +239,18 @@ func (iG *GrpcServer) DeleteComment(ctx context.Context, req *grpc.DeleteComment
 		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
 	}
 
-	err = iG.InteractService.DeleteCommentService(id)
+	postId, err := uuid.Parse(req.PostId)
+
+	if err != nil {
+		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
+	}
+
+	convertType := models.DeleteCommentReq{
+		Id:     id,
+		PostId: postId,
+	}
+
+	err = iG.InteractService.DeleteCommentService(convertType)
 
 	if err != nil {
 		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)

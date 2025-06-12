@@ -80,4 +80,5 @@ message AddCommentReq{
 
 message DeleteCommentReq{
     string Id = 1;
+    string PostId = 2;
 }

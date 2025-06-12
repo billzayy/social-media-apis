@@ -117,17 +117,47 @@ func (iS *InteractService) RemoveLikeService(userId uuid.UUID, postId uuid.UUID)
 }
 
 func (iS *InteractService) AddCommentService(reqComm models.CommentRequest) error {
+	ctx := context.Background()
+	var fail error
+
 	err := iS.InteractRepository.AddComment(reqComm)
 
 	if err != nil {
 		return err
 	}
 
+	go func() {
+		idx, data, err := iS.InteractRepository.GetIndexPostRedis(ctx, reqComm.PostId.String())
+
+		if err != nil {
+			fail = err
+			return
+		}
+
+		data.Comments++
+
+		err = iS.InteractRepository.UpdateInteractRedis(ctx, idx, data)
+
+		if err != nil {
+			fail = err
+			return
+		}
+
+		fail = nil
+	}()
+
+	if fail != nil {
+		return fail
+	}
+
 	return nil
 }
 
-func (iS *InteractService) DeleteCommentService(id uuid.UUID) error {
-	rows, err := iS.InteractRepository.DeleteComment(id)
+func (iS *InteractService) DeleteCommentService(req models.DeleteCommentReq) error {
+	ctx := context.Background()
+	var fail error
+
+	rows, err := iS.InteractRepository.DeleteComment(req.Id)
 
 	if err != nil {
 		return err
@@ -135,6 +165,35 @@ func (iS *InteractService) DeleteCommentService(id uuid.UUID) error {
 
 	if rows == 0 {
 		return fmt.Errorf("not found")
+	}
+
+	go func() {
+		idx, data, err := iS.InteractRepository.GetIndexPostRedis(ctx, req.PostId.String())
+
+		if err != nil {
+			fail = err
+			return
+		}
+
+		if data.Comments > 0 {
+			data.Comments--
+		} else {
+			fail = fmt.Errorf("can't remove comment")
+			return
+		}
+
+		err = iS.InteractRepository.UpdateInteractRedis(ctx, idx, data)
+
+		if err != nil {
+			fail = err
+			return
+		}
+
+		fail = nil
+	}()
+
+	if fail != nil {
+		return fail
 	}
 
 	return nil
