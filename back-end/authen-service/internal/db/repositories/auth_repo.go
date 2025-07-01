@@ -32,11 +32,47 @@ func NewAuthRepository(db *sql.DB, rdb *redis.Client) *AuthRepository {
 }
 
 // * Add User Function
-func (ar *AuthRepository) AddUser(userName string, fullName string, email string, pass string) error {
-	query := `INSERT INTO public."Users" ("UserName", "FullName", "Email", "Password", "LastLogin") 
-	VALUES ($1,$2,$3,$4,$5)`
+func (ar *AuthRepository) AddUser(userName string, fullName string, email string, pass string) (string, error) {
+	var id string
 
-	_, err := ar.db.Exec(query, userName, fullName, email, pass, time.Now())
+	query := `INSERT INTO public."Users" ("UserName", "FullName", "Email", "Password", "LastLogin") 
+	VALUES ($1,$2,$3,$4,$5) RETURNING "ID"`
+
+	rows, err := ar.db.Query(query, userName, fullName, email, pass, time.Now())
+
+	if err != nil {
+		return "", err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		err := rows.Scan(&id)
+
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return id, nil
+}
+
+func (ar *AuthRepository) AddUserProfile(id string) error {
+	query := `INSERT INTO public."UserProfile" ("UserId") VALUES ($1)`
+
+	_, err := ar.db.Exec(query, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (ar *AuthRepository) AddUserSettings(id string) error {
+	query := `INSERT INTO public."UserSettings" ("UserId") VALUES ($1)`
+
+	_, err := ar.db.Exec(query, id)
 
 	if err != nil {
 		return err
@@ -120,11 +156,10 @@ func (ar *AuthRepository) GetHashedPassword(userName string) (string, error) {
 
 	rows, err := ar.db.Query(query, userName, userName)
 
-	defer rows.Close()
-
 	if err != nil {
 		return "", err
 	}
+	defer rows.Close()
 
 	var hashedPass string
 	for rows.Next() {

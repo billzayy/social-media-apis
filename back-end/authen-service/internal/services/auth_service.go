@@ -33,14 +33,26 @@ func (as *AuthService) RegisterService(request models.RegisterRequest) (bool, er
 	checkedEmail, err := as.AuthRepository.CheckEmail(request.Email)
 
 	if err != nil {
-		return false, err
-	}
-
-	if checkedEmail {
 		return false, fmt.Errorf("failed to register account")
 	}
 
-	err = as.AuthRepository.AddUser(request.UserName, fullName, request.Email, hashedPass)
+	if checkedEmail {
+		return false, fmt.Errorf("account existed!")
+	}
+
+	id, err := as.AuthRepository.AddUser(request.UserName, fullName, request.Email, hashedPass)
+
+	if err != nil {
+		return false, err
+	}
+
+	err = as.AuthRepository.AddUserProfile(id)
+
+	if err != nil {
+		return false, err
+	}
+
+	err = as.AuthRepository.AddUserSettings(id)
 
 	if err != nil {
 		return false, err
@@ -50,8 +62,6 @@ func (as *AuthService) RegisterService(request models.RegisterRequest) (bool, er
 }
 
 func (as *AuthService) LoginService(userName string, password string) (models.UserResponse, http.Cookie, error) {
-	ctx := context.Background()
-
 	hashed, err := as.AuthRepository.GetHashedPassword(userName)
 
 	if err != nil {
@@ -86,16 +96,11 @@ func (as *AuthService) LoginService(userName string, password string) (models.Us
 
 	errChan := make(chan error, 2) // Make a slice of channels
 
-	// The Concurrency reduces 200ms of calling API
-	go func() { // Concurrency
-		errChan <- as.AuthRepository.SaveUserRedis(ctx, data.Id, accessToken)
-	}()
-
 	go func() { // Concurrency
 		errChan <- as.AuthRepository.UpdateLoginTime(data.Id)
 	}()
 
-	for range 2 {
+	for range 1 {
 		if err := <-errChan; err != nil {
 			return models.UserResponse{}, http.Cookie{}, err
 		}
