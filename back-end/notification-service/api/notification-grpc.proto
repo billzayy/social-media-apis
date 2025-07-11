@@ -1,0 +1,63 @@
+syntax="proto3";
+
+package proto;
+
+option go_package = "github.com/billzayy/social-media/back-end/notification-service/api";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service NotificationService{
+    rpc CreateSendNotify(ReqSendNotify) returns (google.protobuf.Empty);
+    rpc GetNotify(ReqGetNotify) returns (RespNotificationsList);
+    rpc GetUnreadNotify(ReqUnreadList) returns (RespGetUnreadList);
+    rpc UpdateRead(ReqUpdateNotify) returns (google.protobuf.Empty);
+}
+
+message ReqUpdateNotify{
+    string NotifyId = 1;
+}
+
+message ReqGetNotify{
+    string ReceiverId = 1;
+}
+
+message ReqUnreadList{
+    string NotifyId = 1;
+}
+
+message ReqSendNotify{
+    string SenderId = 1;
+    string ReceiverId = 2;
+    string Messages = 3;
+    string Type = 4;
+    string Url = 5;
+}
+
+message Notifications{
+    string Id = 1;
+    string SenderId = 2;
+    string ReceiverId = 3;
+    string Messages = 4;
+    string Type = 5;
+    string Url = 6;
+    bool IsRead = 7;
+    google.protobuf.Timestamp Date = 8;
+}
+
+message UserSettings{
+    string UserId = 1;
+    string Theme = 2;
+    string Language = 3;
+    string Country = 4;
+    bool EmailNotifications =5;
+    bool PushNotifications = 6;
+}
+
+message RespNotificationsList{
+    repeated Notifications notifications = 1;
+}
+
+message RespGetUnreadList{
+    int64 count = 1;
+}
