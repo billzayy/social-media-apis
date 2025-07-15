@@ -15,9 +15,9 @@ type LoginResp struct {
 }
 
 type SwaggerLoginResp struct {
-	StatusCode int       `json:"statusCode"`
-	Data       LoginResp `json:"data"`
-	Message    string    `json:"message"`
+	StatusCode int       `json:"StatusCode"`
+	Data       LoginResp `json:"Data"`
+	Message    string    `json:"Message"`
 }
 
 type SwaggerLoginReq struct {

@@ -32,7 +32,7 @@ func (uG *GrpcServer) GetUserById(ctx context.Context, req *grpc.ReqGetUser) (*g
 		}
 	}()
 
-	data, err := uG.UserService.GetUserService(req.Id)
+	data, err := uG.UserService.GetUserService(req.ID)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to Get User : %v", err)
@@ -45,7 +45,7 @@ func (uG *GrpcServer) GetUserById(ctx context.Context, req *grpc.ReqGetUser) (*g
 	}
 
 	result := &grpc.RespGetUser{
-		Id:             data.ID.String(),
+		ID:             data.ID.String(),
 		UserName:       data.UserName,
 		FullName:       data.FullName,
 		Email:          data.Email,
@@ -73,7 +73,7 @@ func (uG *GrpcServer) UpdateInfoUser(ctx context.Context, req *grpc.ReqUpdateInf
 	}()
 
 	input := models.ReqUpdateUser{
-		ID:             uuid.MustParse(req.Id),
+		ID:             uuid.MustParse(req.ID),
 		UserName:       req.UserName,
 		FullName:       req.FullName,
 		Email:          req.Email,
@@ -104,7 +104,7 @@ func (uG *GrpcServer) UpdatePassword(ctx context.Context, req *grpc.ReqUpdatePas
 	}()
 
 	input := models.ReqUpdatePassword{
-		ID:          uuid.MustParse(req.Id),
+		ID:          uuid.MustParse(req.ID),
 		OldPassword: req.OldPassword,
 		NewPassword: req.NewPassword,
 	}

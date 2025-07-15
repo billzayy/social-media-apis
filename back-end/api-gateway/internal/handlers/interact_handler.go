@@ -29,7 +29,7 @@ func NewInteractHandler(port string) *InteractHandler {
 //	@Tags			interact
 //	@Accept			json
 //	@Produce		json
-//	@Security			BearerAuth
+//	@Security		BearerAuth
 //	@Param			request	body		models.LikeRequest	true	"Like Check Request"
 //	@Success		200		{object}	models.SwaggerLikeResp
 //	@Failure		404		{object}	models.ResponseDataType
@@ -65,7 +65,7 @@ func (iH *InteractHandler) CheckLikeHandler(c *gin.Context) {
 //	@Tags			interact
 //	@Accept			json
 //	@Produce		json
-//	@Security			BearerAuth
+//	@Security		BearerAuth
 //	@Param			request	body		models.LikeRequest	true	"Like Request"
 //	@Success		200		{object}	models.ResponseDataType
 //	@Failure		400		{object}	models.ResponseDataType
@@ -96,7 +96,7 @@ func (iH *InteractHandler) AddLikeHandler(c *gin.Context) {
 //	@Tags			interact
 //	@Accept			json
 //	@Produce		json
-//	@Security			BearerAuth
+//	@Security		BearerAuth
 //	@Param			request	body		models.LikeRequest	true	"Like Request"
 //	@Success		200		{object}	models.ResponseDataType
 //	@Failure		400		{object}	models.ResponseDataType
@@ -127,7 +127,7 @@ func (iH *InteractHandler) RemoveLikeHandler(c *gin.Context) {
 //	@Tags			interact
 //	@Accept			json
 //	@Produce		json
-//	@Security			BearerAuth
+//	@Security		BearerAuth
 //	@Param			request	body		models.CommentRequest	true	"Comment Request"
 //	@Success		200		{object}	models.ResponseDataType
 //	@Failure		400		{object}	models.ResponseDataType
@@ -146,20 +146,14 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 		return
 	}
 
-	var req models.CommentRequest
+	var req api.AddCommentReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
-	input := &api.AddCommentReq{
-		UserId:  req.UserId,
-		PostId:  req.PostId,
-		Comment: req.Comment,
-	}
-
-	_, err = client.AddComment(ctx, input)
+	_, err = client.AddComment(ctx, &req)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err)
@@ -176,7 +170,7 @@ func (iH *InteractHandler) AddCommentHandler(c *gin.Context) {
 //	@Tags			interact
 //	@Accept			json
 //	@Produce		json
-//	@Security			BearerAuth
+//	@Security		BearerAuth
 //	@Param			id	query		string	true	"Id Request"
 //	@Success		200	{object}	models.ResponseDataType
 //	@Failure		400	{object}	models.ResponseDataType
@@ -195,19 +189,14 @@ func (iH *InteractHandler) DeleteCommentHandler(c *gin.Context) {
 		return
 	}
 
-	var req models.DeleteCommentReq
+	var req api.DeleteCommentReq
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		models.Response(c, http.StatusBadRequest, err)
 		return
 	}
 
-	input := &api.DeleteCommentReq{
-		Id:     req.Id,
-		PostId: req.PostId,
-	}
-
-	_, err = client.DeleteComment(ctx, input)
+	_, err = client.DeleteComment(ctx, &req)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err)

@@ -84,11 +84,11 @@ func (as *AuthService) LoginService(userName string, password string) (models.Us
 		return models.UserResponse{}, http.Cookie{}, err
 	}
 
-	if uuid.MustParse(data.Id) == uuid.Nil {
+	if uuid.MustParse(data.ID) == uuid.Nil {
 		return models.UserResponse{}, http.Cookie{}, fmt.Errorf("not found account")
 	}
 
-	accessToken, expires, cookie, err := middleware.GenerateTokens(data.Id)
+	accessToken, expires, cookie, err := middleware.GenerateTokens(data.ID)
 
 	if err != nil {
 		return models.UserResponse{}, http.Cookie{}, err
@@ -97,7 +97,7 @@ func (as *AuthService) LoginService(userName string, password string) (models.Us
 	errChan := make(chan error, 2) // Make a slice of channels
 
 	go func() { // Concurrency
-		errChan <- as.AuthRepository.UpdateLoginTime(data.Id)
+		errChan <- as.AuthRepository.UpdateLoginTime(data.ID)
 	}()
 
 	for range 1 {

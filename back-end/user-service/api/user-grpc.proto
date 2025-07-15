@@ -14,11 +14,11 @@ service UserService{
 }
 
 message ReqGetUser{
-    string Id = 1;
+    string ID = 1;
 }
 
 message RespGetUser{
-    string Id = 1;
+    string ID = 1;
     string UserName = 2;
     string FullName = 3;
     string Email = 4;
@@ -36,7 +36,7 @@ message RespGetUser{
 }
 
 message ReqUpdateInfo{
-    string Id = 1;
+    string ID = 1;
     string UserName = 2;
     string FullName = 3;
     string Email = 4;
@@ -51,7 +51,7 @@ message ReqUpdateInfo{
 }
 
 message ReqUpdatePassword{
-    string Id = 1;
+    string ID = 1;
     string OldPassword = 2;
     string NewPassword = 3;
 }

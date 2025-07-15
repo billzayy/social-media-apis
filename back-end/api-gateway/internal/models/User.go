@@ -42,7 +42,7 @@ type ResponseUser struct {
 }
 
 type SwaggerUserResp struct {
-	StatusCode int          `json:"statusCode"`
-	Data       ResponseUser `json:"data"`
-	Message    string       `json:"message"`
+	StatusCode int          `json:"StatusCode"`
+	Data       ResponseUser `json:"Data"`
+	Message    string       `json:"Message"`
 }

@@ -50,7 +50,6 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 	data, err := client.GetPost(ctx, &emptypb.Empty{})
 
 	if err != nil {
-		fmt.Println(err)
 		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -94,7 +93,12 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 
 	resp, err := client.CreatePost(ctx, &req)
 
-	models.Response(c, http.StatusCreated, resp)
+	if err != nil {
+		models.Response(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	models.Response(c, http.StatusCreated, resp.Message)
 }
 
 // DeletePost godoc
@@ -105,7 +109,7 @@ func (pH *PostHandler) AddPostHandler(c *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Security		BearerAuth
-//	@Param			id	query		string	true	"User Id"
+//	@Param			id	query		string	true	"Post Id"
 //	@Success		200	{object}	models.ResponseDataType
 //	@Failure		400	{object}	models.ResponseDataType
 //	@Failure		500	{object}	models.ResponseDataType
@@ -123,11 +127,18 @@ func (pH *PostHandler) DeletePostHandler(c *gin.Context) {
 		return
 	}
 
-	req := &api.DeletePostReq{
-		Id: c.Query("id"),
+	id := c.Query("id")
+
+	if len(id) == 0 {
+		models.Response(c, http.StatusBadRequest, "Id is empty")
+		return
 	}
 
-	_, err = client.DeletePost(ctx, req)
+	req := api.DeletePostReq{
+		Id: id,
+	}
+
+	_, err = client.DeletePost(ctx, &req)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err)

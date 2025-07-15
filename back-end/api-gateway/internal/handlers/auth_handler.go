@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -70,12 +69,12 @@ func (aH *AuthHandler) LoginHandler(c *gin.Context) {
 		Secure:   true,
 	})
 
-	result := models.LoginResp{
-		Token:     resp.Token,
-		Type:      resp.Type,
-		ExpiresIn: resp.Expires,
-		User: models.LoginUserResp{
-			ID:             resp.User.Id,
+	result := &pb.LoginResp{
+		Token:   resp.Token,
+		Type:    resp.Type,
+		Expires: resp.Expires,
+		User: &pb.UserResp{
+			ID:             resp.User.ID,
 			FullName:       resp.User.FullName,
 			Email:          resp.User.Email,
 			ProfilePicture: resp.User.ProfilePicture,
@@ -117,20 +116,9 @@ func (aH *AuthHandler) RegisterHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := client.Register(ctx, &pb.RegisterReq{
-		UserName:    req.UserName,
-		Email:       req.Email,
-		FirstName:   req.FirstName,
-		SurName:     req.SurName,
-		Password:    req.Password,
-		Location:    req.Location,
-		BirthDate:   req.BirthDate,
-		Description: req.Description,
-		Website:     []string{""},
-	})
+	resp, err := client.Register(ctx, &req)
 
 	if err != nil || !resp.Successful {
-		fmt.Println(err)
 		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -169,8 +157,6 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(getToken)
-
 	resp, err := client.RefreshToken(ctx, &pb.RefreshTokenReq{RefreshToken: getToken})
 
 	if err != nil {
@@ -188,15 +174,15 @@ func (aH *AuthHandler) RefreshTokenHandler(c *gin.Context) {
 		Secure:   true,
 	})
 
-	models.Response(c, http.StatusOK, models.RefreshTokenResp{
-		User: models.RefreshUserResp{
-			ID:             resp.User.Id,
+	models.Response(c, http.StatusOK, pb.RefreshTokenResp{
+		User: &pb.UserResp{
+			ID:             resp.User.ID,
 			FullName:       resp.User.FullName,
 			Email:          resp.User.Email,
 			ProfilePicture: resp.User.ProfilePicture,
 		},
-		Token:     resp.Token,
-		Type:      resp.Type,
-		ExpiresIn: resp.Expires,
+		Token:   resp.Token,
+		Type:    resp.Type,
+		Expires: resp.Expires,
 	})
 }

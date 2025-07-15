@@ -5,9 +5,9 @@ import (
 )
 
 type ResponseDataType struct {
-	StatusCode int    `json:"statusCode"`
-	Data       any    `json:"data"`
-	Message    string `json:"message"`
+	StatusCode int    `json:"StatusCode"`
+	Data       any    `json:"Data"`
+	Message    string `json:"Message"`
 }
 
 func Response(c *gin.Context, httpCode int, data any) {

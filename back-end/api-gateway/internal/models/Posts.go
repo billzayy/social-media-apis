@@ -1,44 +1,44 @@
 package models
 
 type SwaggerPostReq struct {
-	UserId  string `json:"userId"`
-	Content string `json:"content"`
+	UserId  string `json:"UserID"`
+	Content string `json:"Content"`
 }
 
 type SwaggerPostResp struct {
-	StatusCode int        `json:"statusCode"`
-	Data       []PostResp `json:"data"`
-	Message    string     `json:"message"`
+	StatusCode int        `json:"StatusCode"`
+	Data       []PostResp `json:"Data"`
+	Message    string     `json:"Message"`
 }
 
 type PostResp struct {
-	PostId    string      `json:"postId"`
-	Author    Users       `json:"userId"`
-	Content   string      `json:"content"`
-	Media     []PostMedia `json:"media,omitempty"`
-	CreatedAt string      `json:"createdAt"`
-	Likes     int         `json:"likes"`
-	Comments  int         `json:"comments"`
-	Shares    int         `json:"shares"`
+	PostId    string      `json:"PostID"`
+	Author    Users       `json:"Author"`
+	Content   string      `json:"Content"`
+	Media     []PostMedia `json:"Media,omitempty"`
+	CreatedAt string      `json:"CreatedAt"`
+	Likes     int         `json:"Likes"`
+	Comments  int         `json:"Comments"`
+	Shares    int         `json:"Shares"`
 }
 
 type Users struct {
-	UserId    string `json:"ID"`
-	FullName  string `json:"fullName"`
-	AvatarURL string `json:"profilePicture"`
+	UserID    string `json:"UserID"`
+	FullName  string `json:"FullName"`
+	AvatarURL string `json:"ProfilePicture"`
 }
 
 type PostMedia struct {
-	PostId string `json:"postId"`
-	Type   string `json:"type"`
-	Url    string `json:"url"`
+	PostId string `json:"PostID"`
+	Type   string `json:"Type"`
+	Url    string `json:"Url"`
 }
 
 type PostLikes struct {
 	UserId   string `json:"UserID"`
-	PostId   string `json:"PostId"`
+	PostId   string `json:"PostID"`
 	DateLike string `json:"DateLike"`
-	Id       string `json:"id"`
+	Id       string `json:"ID"`
 }
 
 type PostComment struct {

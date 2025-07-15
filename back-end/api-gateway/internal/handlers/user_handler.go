@@ -49,7 +49,7 @@ func (uH *UserHandler) GetUserByIdHandler(c *gin.Context) {
 		return
 	}
 
-	resp, err := client.GetUserById(ctx, &api.ReqGetUser{Id: id})
+	resp, err := client.GetUserById(ctx, &api.ReqGetUser{ID: id})
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err.Error())
@@ -99,7 +99,7 @@ func (uH *UserHandler) UpdateUserHandler(c *gin.Context) {
 	}
 
 	convertedReq := &api.ReqUpdateInfo{
-		Id:             req.ID,
+		ID:             req.ID,
 		UserName:       req.UserName,
 		FullName:       req.FullName,
 		Email:          req.Email,
@@ -136,7 +136,7 @@ func (uH *UserHandler) UpdateUserHandler(c *gin.Context) {
 //	@Failure		500		{object}	models.ResponseDataType
 //	@Router			/api/v1/user/change-password [patch]
 func (uH *UserHandler) UpdatePasswordHandler(c *gin.Context) {
-	var req models.ReqUpdatePassword
+	var req api.ReqUpdatePassword
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		return
@@ -154,13 +154,7 @@ func (uH *UserHandler) UpdatePasswordHandler(c *gin.Context) {
 	defer cancel()
 	defer server.Close()
 
-	convertInput := &api.ReqUpdatePassword{
-		Id:          req.ID,
-		OldPassword: req.OldPassword,
-		NewPassword: req.NewPassword,
-	}
-
-	_, err = client.UpdatePassword(ctx, convertInput)
+	_, err = client.UpdatePassword(ctx, &req)
 
 	if err != nil {
 		models.Response(c, http.StatusInternalServerError, err.Error())

@@ -96,7 +96,7 @@ func (ar *AuthRepository) GetUser(userName string, hashedPassword string) (model
 	var profilePicture sql.NullString
 
 	for rows.Next() {
-		err = rows.Scan(&data.Id, &data.FullName, &data.Email, &profilePicture)
+		err = rows.Scan(&data.ID, &data.FullName, &data.Email, &profilePicture)
 		if err != nil {
 			return models.GetUserData{}, err
 		}
@@ -124,7 +124,7 @@ func (ar *AuthRepository) GetUserById(id string) (models.GetUserData, error) {
 	var profilePicture sql.NullString
 
 	for rows.Next() {
-		err = rows.Scan(&data.Id, &data.FullName, &data.Email, &profilePicture)
+		err = rows.Scan(&data.ID, &data.FullName, &data.Email, &profilePicture)
 		if err != nil {
 			return models.GetUserData{}, err
 		}

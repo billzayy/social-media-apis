@@ -66,7 +66,7 @@ func (aG *AuthGrpcServer) Login(ctx context.Context, req *auth.LoginReq) (*auth.
 		Cookie:  cookie.Value,
 		Expires: data.ExpiresIn,
 		User: &auth.UserResp{
-			Id:             data.User.Id,
+			ID:             data.User.ID,
 			FullName:       data.User.FullName,
 			Email:          data.User.Email,
 			ProfilePicture: data.User.ProfilePicture,
@@ -92,7 +92,7 @@ func (aG *AuthGrpcServer) RefreshToken(ctx context.Context, req *auth.RefreshTok
 		Cookie:  cookie.Value,
 		Expires: expires,
 		User: &auth.UserResp{
-			Id:             userData.Id,
+			ID:             userData.ID,
 			FullName:       userData.FullName,
 			Email:          userData.Email,
 			ProfilePicture: userData.ProfilePicture,

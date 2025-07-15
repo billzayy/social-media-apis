@@ -24,7 +24,7 @@ type UserResponse struct {
 }
 
 type GetUserData struct {
-	Id             string `json:"ID"`
+	ID             string `json:"ID"`
 	FullName       string `json:"FullName"`
 	Email          string `json:"Email"`
 	ProfilePicture string `json:"ProfilePicture"`
