@@ -2,6 +2,7 @@ package repository
 
 import (
 	authPb "github.com/billzayy/social-media/back-end/authen-service/api"
+	notificationPb "github.com/billzayy/social-media/back-end/notification-service/api"
 	postPb "github.com/billzayy/social-media/back-end/post-service/api"
 	userPb "github.com/billzayy/social-media/back-end/user-service/api"
 	"google.golang.org/grpc"
@@ -39,6 +40,18 @@ func UserRepo(port string) (*grpc.ClientConn, userPb.UserServiceClient, error) {
 	}
 
 	client := userPb.NewUserServiceClient(userServer)
+
+	return userServer, client, nil
+}
+
+func NotificationRepo(port string) (*grpc.ClientConn, notificationPb.NotificationServiceClient, error) {
+	userServer, err := ConnectService("localhost", port)
+
+	if err != nil {
+		return &grpc.ClientConn{}, nil, err
+	}
+
+	client := notificationPb.NewNotificationServiceClient(userServer)
 
 	return userServer, client, nil
 }

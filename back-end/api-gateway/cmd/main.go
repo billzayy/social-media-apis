@@ -14,14 +14,14 @@ import (
 	"github.com/billzayy/social-media/back-end/api-gateway/docs"
 )
 
-//	@title						Swagger Social Media CRUD API
-//	@version					1.0
-//	@description				This is an API Gateway Server.
-//	@BasePath					/
-//	@schemes					http https
-//	@securityDefinitions.apikey	BearerAuth
-//	@in							header
-//	@name						Authorization
+// @title						Swagger Social Media CRUD API
+// @version					1.0
+// @description				This is an API Gateway Server.
+// @BasePath					/
+// @schemes					http https
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
 func main() {
 	err := godotenv.Load("./internal/.env")
 
@@ -36,9 +36,10 @@ func main() {
 	r := gin.New()
 
 	h := handlers.NewHandlers(&handlers.PortList{
-		AuthPort: os.Getenv("AUTH_PORT"),
-		PostPort: os.Getenv("POST_PORT"),
-		UserPort: os.Getenv("USER_PORT"),
+		AuthPort:         os.Getenv("AUTH_PORT"),
+		PostPort:         os.Getenv("POST_PORT"),
+		UserPort:         os.Getenv("USER_PORT"),
+		NotificationPort: os.Getenv("NOTIFICATION_PORT"),
 	})
 
 	r.Use(cors.New(cors.Config{

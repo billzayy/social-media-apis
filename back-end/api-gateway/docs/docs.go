@@ -268,6 +268,204 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/notifications/get": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Notification List w params",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Get Notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UserId Request",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/send": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Send Notification w body data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Send Notification",
+                "parameters": [
+                    {
+                        "description": "Send Notify Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerReqSendNotify"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/unread-count": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Count Unread Notification w Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Count Unread Notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "UserId Request",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/notifications/{id}/read": {
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update Read Status Notification w param Id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "notification"
+                ],
+                "summary": "Update Read Status Notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "NotifyId Request",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/post/add-post": {
             "post": {
                 "security": [
@@ -340,7 +538,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User Id",
+                        "description": "Post Id",
                         "name": "id",
                         "in": "query",
                         "required": true
@@ -673,13 +871,13 @@ const docTemplate = `{
         "models.CommentRequest": {
             "type": "object",
             "properties": {
-                "comment": {
+                "Comment": {
                     "type": "string"
                 },
-                "postId": {
+                "PostID": {
                     "type": "string"
                 },
-                "userId": {
+                "UserID": {
                     "type": "string"
                 }
             }
@@ -687,10 +885,10 @@ const docTemplate = `{
         "models.LikeRequest": {
             "type": "object",
             "properties": {
-                "postId": {
+                "PostID": {
                     "type": "string"
                 },
-                "userId": {
+                "UserID": {
                     "type": "string"
                 }
             }
@@ -732,13 +930,13 @@ const docTemplate = `{
         "models.PostMedia": {
             "type": "object",
             "properties": {
-                "postId": {
+                "PostID": {
                     "type": "string"
                 },
-                "type": {
+                "Type": {
                     "type": "string"
                 },
-                "url": {
+                "Url": {
                     "type": "string"
                 }
             }
@@ -746,32 +944,32 @@ const docTemplate = `{
         "models.PostResp": {
             "type": "object",
             "properties": {
-                "comments": {
+                "Author": {
+                    "$ref": "#/definitions/models.Users"
+                },
+                "Comments": {
                     "type": "integer"
                 },
-                "content": {
+                "Content": {
                     "type": "string"
                 },
-                "createdAt": {
+                "CreatedAt": {
                     "type": "string"
                 },
-                "likes": {
+                "Likes": {
                     "type": "integer"
                 },
-                "media": {
+                "Media": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.PostMedia"
                     }
                 },
-                "postId": {
+                "PostID": {
                     "type": "string"
                 },
-                "shares": {
+                "Shares": {
                     "type": "integer"
-                },
-                "userId": {
-                    "$ref": "#/definitions/models.Users"
                 }
             }
         },
@@ -836,11 +1034,11 @@ const docTemplate = `{
         "models.ResponseDataType": {
             "type": "object",
             "properties": {
-                "data": {},
-                "message": {
+                "Data": {},
+                "Message": {
                     "type": "string"
                 },
-                "statusCode": {
+                "StatusCode": {
                     "type": "integer"
                 }
             }
@@ -901,13 +1099,13 @@ const docTemplate = `{
         "models.SwaggerLikeResp": {
             "type": "object",
             "properties": {
-                "data": {
+                "Data": {
                     "type": "boolean"
                 },
-                "message": {
+                "Message": {
                     "type": "string"
                 },
-                "statusCode": {
+                "StatusCode": {
                     "type": "integer"
                 }
             }
@@ -950,13 +1148,13 @@ const docTemplate = `{
         "models.SwaggerLoginResp": {
             "type": "object",
             "properties": {
-                "data": {
+                "Data": {
                     "$ref": "#/definitions/models.LoginResp"
                 },
-                "message": {
+                "Message": {
                     "type": "string"
                 },
-                "statusCode": {
+                "StatusCode": {
                     "type": "integer"
                 }
             }
@@ -964,10 +1162,10 @@ const docTemplate = `{
         "models.SwaggerPostReq": {
             "type": "object",
             "properties": {
-                "content": {
+                "Content": {
                     "type": "string"
                 },
-                "userId": {
+                "UserID": {
                     "type": "string"
                 }
             }
@@ -975,30 +1173,50 @@ const docTemplate = `{
         "models.SwaggerPostResp": {
             "type": "object",
             "properties": {
-                "data": {
+                "Data": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.PostResp"
                     }
                 },
-                "message": {
+                "Message": {
                     "type": "string"
                 },
-                "statusCode": {
+                "StatusCode": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.SwaggerReqSendNotify": {
+            "type": "object",
+            "properties": {
+                "Messages": {
+                    "type": "string"
+                },
+                "ReceiverId": {
+                    "type": "string"
+                },
+                "SenderId": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "Url": {
+                    "type": "string"
                 }
             }
         },
         "models.SwaggerUserResp": {
             "type": "object",
             "properties": {
-                "data": {
+                "Data": {
                     "$ref": "#/definitions/models.ResponseUser"
                 },
-                "message": {
+                "Message": {
                     "type": "string"
                 },
-                "statusCode": {
+                "StatusCode": {
                     "type": "integer"
                 }
             }
@@ -1006,13 +1224,13 @@ const docTemplate = `{
         "models.Users": {
             "type": "object",
             "properties": {
-                "ID": {
+                "FullName": {
                     "type": "string"
                 },
-                "fullName": {
+                "ProfilePicture": {
                     "type": "string"
                 },
-                "profilePicture": {
+                "UserID": {
                     "type": "string"
                 }
             }

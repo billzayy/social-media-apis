@@ -65,6 +65,32 @@ func (nS *NotifyService) SendNotifyService(req models.ReqSendNotify) error {
 	return nil
 }
 
+func (nS *NotifyService) SendNotifyServiceGrpc(req models.ReqSendNotify) error {
+	resp, err := nS.NotifyRepository.GetNotifySettingByUserId(req.ReceiverId)
+
+	if err != nil {
+		return err
+	}
+
+	//* Check User is DnD? (DnD: Do Not Disturb)
+	if resp.PushNotifications == false {
+		return nil
+	}
+
+	if resp.EmailNotifications == true {
+		// Send to send email logic
+	}
+
+	// Save to Databases
+	err = nS.NotifyRepository.SaveDataNotify(req)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (nS *NotifyService) GetNotifyService(id string) ([]models.Notifications, error) {
 	receiverId := uuid.MustParse(id)
 

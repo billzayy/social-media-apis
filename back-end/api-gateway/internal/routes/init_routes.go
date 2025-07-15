@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/handlers"
 	"github.com/billzayy/social-media/back-end/api-gateway/internal/middleware"
+	"github.com/billzayy/social-media/back-end/api-gateway/internal/utils"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -40,6 +41,17 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 		user.PATCH("/change-password", h.UserHandler.UpdatePasswordHandler)
 	}
 
+	notification := router.Group("/api/v1/notifications", middleware.AuthMiddleware())
+	{
+		notification.GET("/get", h.NotificationHandler.GetNotify)
+		notification.GET("/unread-count", h.NotificationHandler.GetUnreadNotify)
+		notification.POST("/send", h.NotificationHandler.SendNotify)
+		notification.PATCH("/:id/read", h.NotificationHandler.UpdateRead)
+	}
+
 	// Access "http://localhost:{REST_PORT}/swagger/index.html"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Websocket Server
+	router.GET("/ws/notification", utils.NotifySocketServer)
 }

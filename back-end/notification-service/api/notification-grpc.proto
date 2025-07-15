@@ -23,7 +23,7 @@ message ReqGetNotify{
 }
 
 message ReqUnreadList{
-    string NotifyId = 1;
+    string UserId = 1;
 }
 
 message ReqSendNotify{
@@ -43,15 +43,6 @@ message Notifications{
     string Url = 6;
     bool IsRead = 7;
     google.protobuf.Timestamp Date = 8;
-}
-
-message UserSettings{
-    string UserId = 1;
-    string Theme = 2;
-    string Language = 3;
-    string Country = 4;
-    bool EmailNotifications =5;
-    bool PushNotifications = 6;
 }
 
 message RespNotificationsList{

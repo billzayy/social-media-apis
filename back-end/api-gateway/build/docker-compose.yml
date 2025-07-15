@@ -16,3 +16,26 @@ services:
     container_name: user-service
     ports:
       - "${USER_PORT}:${USER_GRPC}"
+
+  notification-server:
+    image: coderbillzay/social-notification-service
+    container_name: notification-service
+    ports:
+      - "${NOTIFICATION_PORT}:${NOTIFICATION_GRPC}"
+    environment:
+      - RABBITMQ_HOST=rabbit-mq
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}
+    depends_on:
+      - rabbit-mq
+
+  rabbit-mq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:5672"    # AMQP port
+      - "${RABBITMQ_MANAGEMENT}:15672"  # Management UI
+    environment:
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PASS=${RABBITMQ_PASS}

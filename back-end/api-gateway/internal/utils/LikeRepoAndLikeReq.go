@@ -17,16 +17,12 @@ func LikeRepoAndGetRequest(c *gin.Context, port string) (*grpc.ClientConn, api.P
 		return server, client, &api.LikeRequest{}, err
 	}
 
-	var req models.LikeRequest
+	var req api.LikeRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		models.Response(c, http.StatusBadRequest, err.Error())
 		return server, client, &api.LikeRequest{}, err
 	}
 
-	input := &api.LikeRequest{
-		UserId: req.UserId,
-		PostId: req.PostId,
-	}
-	return server, client, input, nil
+	return server, client, &req, nil
 }

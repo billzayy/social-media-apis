@@ -2,18 +2,18 @@ basePath: /
 definitions:
   models.CommentRequest:
     properties:
-      comment:
+      Comment:
         type: string
-      postId:
+      PostID:
         type: string
-      userId:
+      UserID:
         type: string
     type: object
   models.LikeRequest:
     properties:
-      postId:
+      PostID:
         type: string
-      userId:
+      UserID:
         type: string
     type: object
   models.LoginResp:
@@ -40,33 +40,33 @@ definitions:
     type: object
   models.PostMedia:
     properties:
-      postId:
+      PostID:
         type: string
-      type:
+      Type:
         type: string
-      url:
+      Url:
         type: string
     type: object
   models.PostResp:
     properties:
-      comments:
+      Author:
+        $ref: '#/definitions/models.Users'
+      Comments:
         type: integer
-      content:
+      Content:
         type: string
-      createdAt:
+      CreatedAt:
         type: string
-      likes:
+      Likes:
         type: integer
-      media:
+      Media:
         items:
           $ref: '#/definitions/models.PostMedia'
         type: array
-      postId:
+      PostID:
         type: string
-      shares:
+      Shares:
         type: integer
-      userId:
-        $ref: '#/definitions/models.Users'
     type: object
   models.ReqUpdatePassword:
     properties:
@@ -108,10 +108,10 @@ definitions:
     type: object
   models.ResponseDataType:
     properties:
-      data: {}
-      message:
+      Data: {}
+      Message:
         type: string
-      statusCode:
+      StatusCode:
         type: integer
     type: object
   models.ResponseUser:
@@ -151,11 +151,11 @@ definitions:
     type: object
   models.SwaggerLikeResp:
     properties:
-      data:
+      Data:
         type: boolean
-      message:
+      Message:
         type: string
-      statusCode:
+      StatusCode:
         type: integer
     type: object
   models.SwaggerLoginReq:
@@ -183,47 +183,60 @@ definitions:
     type: object
   models.SwaggerLoginResp:
     properties:
-      data:
+      Data:
         $ref: '#/definitions/models.LoginResp'
-      message:
+      Message:
         type: string
-      statusCode:
+      StatusCode:
         type: integer
     type: object
   models.SwaggerPostReq:
     properties:
-      content:
+      Content:
         type: string
-      userId:
+      UserID:
         type: string
     type: object
   models.SwaggerPostResp:
     properties:
-      data:
+      Data:
         items:
           $ref: '#/definitions/models.PostResp'
         type: array
-      message:
+      Message:
         type: string
-      statusCode:
+      StatusCode:
         type: integer
+    type: object
+  models.SwaggerReqSendNotify:
+    properties:
+      Messages:
+        type: string
+      ReceiverId:
+        type: string
+      SenderId:
+        type: string
+      Type:
+        type: string
+      Url:
+        type: string
     type: object
   models.SwaggerUserResp:
     properties:
-      data:
+      Data:
         $ref: '#/definitions/models.ResponseUser'
-      message:
+      Message:
         type: string
-      statusCode:
+      StatusCode:
         type: integer
     type: object
   models.Users:
     properties:
-      ID:
+      FullName:
         type: string
-      fullName:
+      ProfilePicture:
         type: string
-      profilePicture:
+      UserID:
         type: string
     type: object
 info:
@@ -391,6 +404,131 @@ paths:
       summary: Delete Like
       tags:
       - interact
+  /api/v1/notifications/{id}/read:
+    patch:
+      consumes:
+      - application/json
+      description: Update Read Status Notification w param Id
+      parameters:
+      - description: NotifyId Request
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Update Read Status Notification
+      tags:
+      - notification
+  /api/v1/notifications/get:
+    get:
+      consumes:
+      - application/json
+      description: Get Notification List w params
+      parameters:
+      - description: UserId Request
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Get Notification
+      tags:
+      - notification
+  /api/v1/notifications/send:
+    post:
+      consumes:
+      - application/json
+      description: Send Notification w body data
+      parameters:
+      - description: Send Notify Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SwaggerReqSendNotify'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Send Notification
+      tags:
+      - notification
+  /api/v1/notifications/unread-count:
+    get:
+      consumes:
+      - application/json
+      description: Count Unread Notification w Id
+      parameters:
+      - description: UserId Request
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Count Unread Notification
+      tags:
+      - notification
   /api/v1/post/add-post:
     post:
       consumes:
@@ -429,7 +567,7 @@ paths:
       - application/json
       description: Delete Post with request and token
       parameters:
-      - description: User Id
+      - description: Post Id
         in: query
         name: id
         required: true

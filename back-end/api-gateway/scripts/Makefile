@@ -4,12 +4,13 @@ DOCKER_COMPOSE_FILE=./build/docker-compose.yml
 DOCKER_COMPOSE_CMD=docker-compose -f $(DOCKER_COMPOSE_FILE) --env-file $(ENVIRONMENT_PATH)
 
 # Default target
-all: run-docker run-gateway
+all: swagger run-docker run-gateway
 
 doc: swagger run-gateway
 
 swagger:
 	@echo "Generate Swagger files ..."
+	swag fmt
 	swag init -g ./cmd/main.go -o docs
 
 run-gateway:

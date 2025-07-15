@@ -53,7 +53,7 @@ func (uG *GrpcServer) CreateSendNotify(ctx context.Context, req *grpc.ReqSendNot
 		Url:        req.Type,
 	}
 
-	err = uG.NotifyService.SendNotifyService(reqInput)
+	err = uG.NotifyService.SendNotifyServiceGrpc(reqInput)
 
 	if err != nil {
 		return &emptypb.Empty{}, status.Errorf(codes.Internal, "%v", err)
@@ -103,7 +103,7 @@ func (uG *GrpcServer) GetNotify(ctx context.Context, req *grpc.ReqGetNotify) (*g
 }
 
 func (uG *GrpcServer) GetUnreadNotify(ctx context.Context, req *grpc.ReqUnreadList) (*grpc.RespGetUnreadList, error) {
-	data, err := uG.NotifyService.GetUnreadNotifyService(req.NotifyId)
+	data, err := uG.NotifyService.GetUnreadNotifyService(req.UserId)
 
 	if err != nil {
 		return &grpc.RespGetUnreadList{}, status.Errorf(codes.Internal, "%v", err)
