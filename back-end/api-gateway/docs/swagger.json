@@ -12,6 +12,158 @@
     },
     "basePath": "/",
     "paths": {
+        "/api/v1/chat/delete": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete Message w request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Delete Message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Message Id",
+                        "name": "messageId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chat/get-message": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get Message w request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Get Message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Room Id",
+                        "name": "roomId",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Limit Get",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Offset for pagination",
+                        "name": "offset",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerRespGetMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/chat/send": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Send Message w request",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "chat"
+                ],
+                "summary": "Send Message",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Type of room chat",
+                        "name": "chatType",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Send Chat Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SwaggerReqSendMessage"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseDataType"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/interact/add-comment": {
             "post": {
                 "security": [
@@ -1028,6 +1180,26 @@
                 }
             }
         },
+        "models.RespGetMessage": {
+            "type": "object",
+            "properties": {
+                "Content": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "string"
+                },
+                "MessageType": {
+                    "type": "string"
+                },
+                "Sender": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
         "models.ResponseDataType": {
             "type": "object",
             "properties": {
@@ -1184,6 +1356,23 @@
                 }
             }
         },
+        "models.SwaggerReqSendMessage": {
+            "type": "object",
+            "properties": {
+                "Content": {
+                    "type": "string"
+                },
+                "MessageType": {
+                    "type": "string"
+                },
+                "ReceiverId": {
+                    "type": "string"
+                },
+                "SenderId": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SwaggerReqSendNotify": {
             "type": "object",
             "properties": {
@@ -1204,6 +1393,23 @@
                 }
             }
         },
+        "models.SwaggerRespGetMessage": {
+            "type": "object",
+            "properties": {
+                "Data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.RespGetMessage"
+                    }
+                },
+                "Message": {
+                    "type": "string"
+                },
+                "StatusCode": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.SwaggerUserResp": {
             "type": "object",
             "properties": {
@@ -1215,6 +1421,20 @@
                 },
                 "StatusCode": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "Avatar": {
+                    "type": "string"
+                },
+                "UserId": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
                 }
             }
         },

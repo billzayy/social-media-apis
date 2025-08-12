@@ -5,6 +5,7 @@ type PortList struct {
 	PostPort         string
 	UserPort         string
 	NotificationPort string
+	ChatPort         string
 }
 
 type Handlers struct {
@@ -13,6 +14,7 @@ type Handlers struct {
 	InteractHandler     *InteractHandler
 	UserHandler         *UserHandler
 	NotificationHandler *NotificationHandler
+	ChatHandler         *ChatHandler
 }
 
 func NewHandlers(portList *PortList) *Handlers {
@@ -22,5 +24,6 @@ func NewHandlers(portList *PortList) *Handlers {
 		InteractHandler:     NewInteractHandler(portList.PostPort),
 		UserHandler:         NewUserHandler(portList.UserPort),
 		NotificationHandler: NewNotificationHandler(portList.NotificationPort),
+		ChatHandler:         NewChatHandler(portList.ChatPort),
 	}
 }

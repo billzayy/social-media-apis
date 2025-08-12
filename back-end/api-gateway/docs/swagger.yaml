@@ -106,6 +106,19 @@ definitions:
           type: string
         type: array
     type: object
+  models.RespGetMessage:
+    properties:
+      Content:
+        type: string
+      CreatedAt:
+        type: string
+      Id:
+        type: string
+      MessageType:
+        type: string
+      Sender:
+        $ref: '#/definitions/models.User'
+    type: object
   models.ResponseDataType:
     properties:
       Data: {}
@@ -208,6 +221,17 @@ definitions:
       StatusCode:
         type: integer
     type: object
+  models.SwaggerReqSendMessage:
+    properties:
+      Content:
+        type: string
+      MessageType:
+        type: string
+      ReceiverId:
+        type: string
+      SenderId:
+        type: string
+    type: object
   models.SwaggerReqSendNotify:
     properties:
       Messages:
@@ -221,6 +245,17 @@ definitions:
       Url:
         type: string
     type: object
+  models.SwaggerRespGetMessage:
+    properties:
+      Data:
+        items:
+          $ref: '#/definitions/models.RespGetMessage'
+        type: array
+      Message:
+        type: string
+      StatusCode:
+        type: integer
+    type: object
   models.SwaggerUserResp:
     properties:
       Data:
@@ -229,6 +264,15 @@ definitions:
         type: string
       StatusCode:
         type: integer
+    type: object
+  models.User:
+    properties:
+      Avatar:
+        type: string
+      UserId:
+        type: string
+      UserName:
+        type: string
     type: object
   models.Users:
     properties:
@@ -245,6 +289,103 @@ info:
   title: Swagger Social Media CRUD API
   version: "1.0"
 paths:
+  /api/v1/chat/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Message w request
+      parameters:
+      - description: Message Id
+        in: query
+        name: messageId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Delete Message
+      tags:
+      - chat
+  /api/v1/chat/get-message:
+    get:
+      consumes:
+      - application/json
+      description: Get Message w request
+      parameters:
+      - description: Room Id
+        in: query
+        name: roomId
+        required: true
+        type: string
+      - description: Limit Get
+        in: query
+        name: limit
+        required: true
+        type: string
+      - description: Offset for pagination
+        in: query
+        name: offset
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SwaggerRespGetMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Get Message
+      tags:
+      - chat
+  /api/v1/chat/send:
+    post:
+      consumes:
+      - application/json
+      description: Send Message w request
+      parameters:
+      - description: Type of room chat
+        in: query
+        name: chatType
+        required: true
+        type: string
+      - description: Send Chat Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SwaggerReqSendMessage'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/models.ResponseDataType'
+      security:
+      - BearerAuth: []
+      summary: Send Message
+      tags:
+      - chat
   /api/v1/interact/add-comment:
     post:
       consumes:

@@ -1,8 +1,8 @@
 module github.com/billzayy/social-media/back-end/api-gateway
 
-go 1.24.4
+go 1.24.5
 
-toolchain go1.24.5
+toolchain go1.24.6
 
 replace github.com/billzayy/social-media/back-end/authen-service => ../authen-service
 
@@ -12,21 +12,26 @@ replace github.com/billzayy/social-media/back-end/user-service => ../user-servic
 
 replace github.com/billzayy/social-media/back-end/notification-service => ../notification-service
 
+replace github.com/billzayy/social-media/back-end/chat-service => ../chat-service
+
 require (
 	github.com/billzayy/social-media/back-end/authen-service v0.0.0-00010101000000-000000000000
 	github.com/billzayy/social-media/back-end/notification-service v0.0.0-00010101000000-000000000000
 	github.com/billzayy/social-media/back-end/post-service v0.0.0-00010101000000-000000000000
 	github.com/billzayy/social-media/back-end/user-service v0.0.0-00010101000000-000000000000
-	github.com/gin-contrib/cors v1.7.5
+	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.39.0
+	golang.org/x/crypto v0.40.0
 	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 )
 
-require github.com/swaggo/gin-swagger v1.6.0
+require (
+	github.com/billzayy/social-media/back-end/chat-service v0.0.0-00010101000000-000000000000
+	github.com/swaggo/gin-swagger v1.6.0
+)
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
@@ -45,6 +50,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -61,9 +67,9 @@ require (
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	golang.org/x/arch v0.18.0 // indirect
 	golang.org/x/net v0.41.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
-	golang.org/x/tools v0.33.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

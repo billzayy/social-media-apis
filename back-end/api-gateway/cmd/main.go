@@ -40,6 +40,7 @@ func main() {
 		PostPort:         os.Getenv("POST_PORT"),
 		UserPort:         os.Getenv("USER_PORT"),
 		NotificationPort: os.Getenv("NOTIFICATION_PORT"),
+		ChatPort:         os.Getenv("CHAT_PORT"),
 	})
 
 	r.Use(cors.New(cors.Config{

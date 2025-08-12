@@ -49,6 +49,13 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 		notification.PATCH("/:id/read", h.NotificationHandler.UpdateRead)
 	}
 
+	chat := router.Group("/api/v1/chat", middleware.AuthMiddleware())
+	{
+		chat.GET("/get-message", h.ChatHandler.GetMessageHandler)
+		chat.POST("/send", h.ChatHandler.SendMessageHandler)
+		chat.DELETE("/delete", h.ChatHandler.DeleteMessageHandler)
+	}
+
 	// Access "http://localhost:{REST_PORT}/swagger/index.html"
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

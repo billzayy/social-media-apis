@@ -2,6 +2,7 @@ package repository
 
 import (
 	authPb "github.com/billzayy/social-media/back-end/authen-service/api"
+	chatPb "github.com/billzayy/social-media/back-end/chat-service/api"
 	notificationPb "github.com/billzayy/social-media/back-end/notification-service/api"
 	postPb "github.com/billzayy/social-media/back-end/post-service/api"
 	userPb "github.com/billzayy/social-media/back-end/user-service/api"
@@ -54,4 +55,16 @@ func NotificationRepo(port string) (*grpc.ClientConn, notificationPb.Notificatio
 	client := notificationPb.NewNotificationServiceClient(userServer)
 
 	return userServer, client, nil
+}
+
+func ChatRepo(port string) (*grpc.ClientConn, chatPb.ChatServiceClient, error) {
+	chatServer, err := ConnectService("localhost", port)
+
+	if err != nil {
+		return &grpc.ClientConn{}, nil, err
+	}
+
+	client := chatPb.NewChatServiceClient(chatServer)
+
+	return chatServer, client, nil
 }
