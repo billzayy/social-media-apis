@@ -1,0 +1,53 @@
+syntax="proto3";
+
+package proto;
+
+option go_package = "github.com/billzayy/social-media/back-end/chat-service/api";
+
+import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+
+service ChatService{
+    rpc GetMessage(ReqGetMessage) returns (RespListMessage);
+    rpc SendPrivateConversation(ReqSendPrivateMessage) returns (RespSendPrivateMessage);
+    rpc DeleteMessage(ReqDeleteMessage) returns (google.protobuf.Empty);
+}
+
+message ReqSendPrivateMessage {
+    string SenderId = 1;
+    string ReceiverId = 2;
+    string Content = 3;
+    string MessageType = 4; 
+}
+
+message RespSendPrivateMessage{
+    string RoomId = 1;
+}
+
+message ReqGetMessage{
+    string ConversationId = 1;
+    int64 Limit = 2;
+    int64 Offset = 3;
+}
+
+message RespListMessage{
+    repeated RespGetMessage Data = 1;
+}
+
+message RespGetMessage {
+    string Id = 1;
+    User Sender = 2;
+    string Content = 3;
+    string MessageType = 4; 
+    string CreatedAt = 5;
+}
+
+message ReqDeleteMessage{
+    string MessageId = 1;
+}
+
+message User{
+    string UserId = 1;
+    string UserName = 2;
+    string Avatar = 3;
+}
