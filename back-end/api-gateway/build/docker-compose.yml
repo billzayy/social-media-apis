@@ -30,12 +30,12 @@ services:
     ports:
       - "${NOTIFICATION_PORT}:${NOTIFICATION_GRPC}"
     environment:
-      - RABBITMQ_HOST=rabbit-mq
+      - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
     depends_on:
-      - rabbit-mq
+      - rabbitmq
     networks:
       - app-network
 
@@ -46,24 +46,24 @@ services:
       - "${CHAT_PORT}:${CHAT_GRPC}"
       - "${CHAT_MESSAGE}:9000"
     environment:
-      - RABBITMQ_HOST=rabbit-mq
+      - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
     depends_on:
-      - rabbit-mq
+      - rabbitmq
     networks:
       - app-network
 
-  rabbit-mq:
+  rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
     ports:
       - "${RABBITMQ_PORT}:5672"    # AMQP port
       - "${RABBITMQ_MANAGEMENT}:15672"  # Management UI
     environment:
-      - RABBITMQ_USER=${RABBITMQ_USER}
-      - RABBITMQ_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_DEFAULT_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASS}
     networks:
       - app-network
 

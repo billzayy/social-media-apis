@@ -167,7 +167,7 @@ func (nH *NotificationHandler) GetUnreadNotify(c *gin.Context) {
 	models.Response(c, http.StatusOK, data)
 }
 
-//	 Update Read Status Notification doc
+// Update Read Status Notification doc
 //
 //	@Summary		Update Read Status Notification
 //	@Description	Update Read Status Notification w param Id

@@ -30,6 +30,10 @@ func RabbitMQ() (*amqp.Connection, *amqp.Channel, error) {
 	HOST := os.Getenv("RABBITMQ_HOST")
 	PORT := os.Getenv("RABBITMQ_PORT")
 
+	if HOST == "" {
+		HOST = "localhost"
+	}
+
 	URL := fmt.Sprintf("amqp://%s:%s@%s:%s/", USERNAME, PASSWORD, HOST, PORT)
 
 	conn, err := waitForRabbitMQ(URL, 10, 2*time.Second)

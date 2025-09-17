@@ -32,19 +32,18 @@ func main() {
 	}
 
 	postgres, err := db.ConnectDB()
-	defer postgres.Close()
 
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer postgres.Close()
 
 	redis, err := db.ConnectRedis()
 
-	defer redis.Close()
-
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer redis.Close()
 
 	h := handlers.NewHandlers(services.NewAuthService((repositories.NewRepositories(postgres, redis).AuthRepository)))
 

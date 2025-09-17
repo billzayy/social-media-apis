@@ -12,6 +12,7 @@ import (
 )
 
 func waitForRabbitMQ(url string, maxRetries int, delay time.Duration) (*amqp.Connection, error) {
+	fmt.Println(url)
 	for i := 0; i < maxRetries; i++ {
 		conn, err := amqp.Dial(url)
 		if err == nil {
@@ -31,7 +32,7 @@ func RabbitMQ() (*amqp.Connection, *amqp.Channel, error) {
 
 	URL := fmt.Sprintf("amqp://%s:%s@%s:%s/", USERNAME, PASSWORD, HOST, PORT)
 
-	conn, err := waitForRabbitMQ(URL, 0, 2*time.Second)
+	conn, err := waitForRabbitMQ(URL, 10, 2*time.Second)
 
 	if err != nil {
 		return &amqp.Connection{}, &amqp.Channel{}, err

@@ -69,7 +69,7 @@ func main() {
 		socketServer,
 	))
 
-	add := flag.String("mode", "", "Notification Service Mode")
+	add := flag.String("mode", "", "Chat Service Mode")
 
 	flag.Parse()
 	r := gin.New()
@@ -110,7 +110,7 @@ func main() {
 		))
 
 		r.GET("/ws/chat", socketServer.HandleWebSocket)
-		go r.Run(":9000")
+		go r.Run(":" + os.Getenv("WS_PORT"))
 
 		lis, err := net.Listen("tcp", ":"+os.Getenv("GRPC_PORT"))
 
