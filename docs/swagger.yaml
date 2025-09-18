@@ -1,0 +1,16 @@
+basePath: /
+info:
+  contact: {}
+  description: This is an API Gateway Server.
+  title: Swagger Social Media CRUD API
+  version: "1.0"
+paths: {}
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

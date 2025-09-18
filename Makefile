@@ -13,8 +13,8 @@ doc: swagger run-gateway
 
 swagger:
 	@echo "Generate Swagger files ..."
-	swag fmt
-	swag init -g ./api-gateway/cmd/main.go -o docs
+	swag fmt -d ./api-gateway/cmd/main.go 
+	swag init -d ./api-gateway/cmd -o docs
 
 run-gateway:
 	@echo "Running API Gateway..."
