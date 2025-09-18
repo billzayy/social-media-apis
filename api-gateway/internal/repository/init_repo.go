@@ -10,7 +10,7 @@ import (
 )
 
 func AuthRepo(port string) (*grpc.ClientConn, authPb.AuthServiceClient, error) {
-	authServer, err := ConnectService("localhost", port)
+	authServer, err := ConnectService("authen-service", port) // localhost if want to test
 
 	if err != nil {
 		return &grpc.ClientConn{}, nil, err
@@ -22,7 +22,7 @@ func AuthRepo(port string) (*grpc.ClientConn, authPb.AuthServiceClient, error) {
 }
 
 func PostRepo(port string) (*grpc.ClientConn, postPb.PostServiceClient, error) {
-	postServer, err := ConnectService("localhost", port)
+	postServer, err := ConnectService("post-service", port)
 
 	if err != nil {
 		return &grpc.ClientConn{}, nil, err
@@ -34,7 +34,7 @@ func PostRepo(port string) (*grpc.ClientConn, postPb.PostServiceClient, error) {
 }
 
 func UserRepo(port string) (*grpc.ClientConn, userPb.UserServiceClient, error) {
-	userServer, err := ConnectService("localhost", port)
+	userServer, err := ConnectService("user-service", port)
 
 	if err != nil {
 		return &grpc.ClientConn{}, nil, err
@@ -46,7 +46,7 @@ func UserRepo(port string) (*grpc.ClientConn, userPb.UserServiceClient, error) {
 }
 
 func NotificationRepo(port string) (*grpc.ClientConn, notificationPb.NotificationServiceClient, error) {
-	userServer, err := ConnectService("localhost", port)
+	userServer, err := ConnectService("notification-service", port)
 
 	if err != nil {
 		return &grpc.ClientConn{}, nil, err
@@ -58,7 +58,7 @@ func NotificationRepo(port string) (*grpc.ClientConn, notificationPb.Notificatio
 }
 
 func ChatRepo(port string) (*grpc.ClientConn, chatPb.ChatServiceClient, error) {
-	chatServer, err := ConnectService("localhost", port)
+	chatServer, err := ConnectService("chat-service", port)
 
 	if err != nil {
 		return &grpc.ClientConn{}, nil, err

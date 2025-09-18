@@ -1,0 +1,86 @@
+name: social-media-api
+services:  
+  api-gateway:
+    image: coderbillzay/social-api-gateway
+    container_name: api-gateway
+    ports:
+      - "${REST_PORT}:${REST_PORT}"
+    depends_on:
+      - authen-service
+      - post-server
+      - user-server
+      - notification-server
+      - chat-server
+    networks:
+      - app-network
+
+  authen-service:
+    image: coderbillzay/social-authen-service
+    container_name: authen-service
+    ports:
+      - "${AUTH_PORT}:${AUTH_GRPC}"
+    networks:
+      - app-network
+
+  post-server:    
+    image: coderbillzay/social-post-service
+    container_name: post-service
+    ports:
+      - "${POST_PORT}:${POST_GRPC}"
+    networks:
+      - app-network
+
+  user-server:
+    image: coderbillzay/social-user-service
+    container_name: user-service
+    ports:
+      - "${USER_PORT}:${USER_GRPC}"
+    networks:
+      - app-network
+
+  notification-server:
+    image: coderbillzay/social-notification-service
+    container_name: notification-service
+    ports:
+      - "${NOTIFICATION_PORT}:${NOTIFICATION_GRPC}"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  chat-server:
+    image: coderbillzay/social-chat-service
+    container_name: chat-service
+    ports:
+      - "${CHAT_PORT}:${CHAT_GRPC}"
+      - "${CHAT_MESSAGE}:9000"
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=${RABBITMQ_PORT}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:5672"    # AMQP port
+      - "${RABBITMQ_MANAGEMENT}:15672"  # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USERNAME=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASS}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
