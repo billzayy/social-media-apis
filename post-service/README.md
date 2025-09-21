@@ -1,8 +1,8 @@
-# Chat Service - Social Media Apis Golang
+# Post Service - Social Media Apis Golang
 
-This service is created for Get and Send Chat APIs with Websocket server.
+This service is created for CRUD Post APIs and Interact APIs
 
-Using: Supabase Postgres, Redis, Websocket, RabbitMq JWT and GoLang to build.
+Using: Supabase Postgres, Redis and GoLang to build.
 
 ***P/S***: If you want to develop your own api with this project, please add file `.env` into [`./internal`](./internal/) and fill the file with [`Preparation for Develop`](#preparation-for-develop) below.
 
@@ -42,14 +42,8 @@ REDIS_ADDR="<Redis Address>" # default: ""
 REDIS_USERNAME="<Redis Username>" # default: default
 REDIS_PASSWORD="<Redis Password>" # default: ""
 
-RABBITMQ_USERNAME="<RabbitMQ Username>"  # default: "guest"
-RABBITMQ_PASSWORD="<RabbitMQ Password>" # default: "guest"
-RABBITMQ_HOST="<RabbitMQ Host>" # default: "localhost"
-RABBITMQ_PORT="<RabbitMQ Port>" # default: 5672
-
 REST_PORT="<Rest Port>" # default: 3000
 GRPC_PORT="<Grpc Port>" # default: 50051
-WS_PORT="<Websocket Port>" # default: 9000
 
 ACCESS_TOKEN_KEY="<Access Token>" # default: ""
 REFRESH_TOKEN_KEY="<Refresh Token>" # default: ""
@@ -83,7 +77,7 @@ If you want to build image for this project step-by-step, run `make` command wit
     ```bash
     $ make -f ./scripts/Makefile generate
     ```
-* `build` : To build docker image for `chat-service` service with [`Dockerfile`](./Dockerfile)
+* `build` : To build docker image for `post-service` service with [`Dockerfile`](./Dockerfile)
     ```bash
     $ make -f ./scripts/Makefile build
     $ docker images # check created images

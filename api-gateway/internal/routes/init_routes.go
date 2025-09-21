@@ -9,7 +9,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
+func SetupRoutes(router *gin.Engine, h *handlers.Handlers, wsServer *utils.WebSocketServer) {
 	authV1 := router.Group("/auth")
 	{
 		authV1.POST("/login", h.AuthHandler.LoginHandler)
@@ -61,4 +61,5 @@ func SetupRoutes(router *gin.Engine, h *handlers.Handlers) {
 
 	// Websocket Server
 	router.GET("/ws/notification", utils.NotifySocketServer)
+	router.GET("/ws/chat", wsServer.HandleWebSocket)
 }

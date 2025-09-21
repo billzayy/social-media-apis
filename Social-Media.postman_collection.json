@@ -1,0 +1,765 @@
+{
+	"info": {
+		"_postman_id": "efb8ba15-1e7f-4474-9834-c18b4d570909",
+		"name": "Social-Media",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31530016"
+	},
+	"item": [
+		{
+			"name": "Authen-Service",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/auth/login?userName=bill&password=1234",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "userName",
+									"value": "bill"
+								},
+								{
+									"key": "password",
+									"value": "1234"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userName\" : \"bill\",\n    \"email\" : \"coderbillzay@gmail.com\",\n    \"firstName\" : \"go\",\n    \"surName\" : \"lang\",\n    \"password\" : \"1234\",\n    \"location\" : \"Viet Nam\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/auth/register",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh-Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Set-Cookie",
+								"value": "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDUwMDA0OTUsInVzZXJJZCI6IjU4MzE3MWYwLWYzOTgtNGYwMy1iNWEwLTc3YjZiODQ4OWZiNCJ9.1W0D2ctmgUmIx ekqV9G34557IBlJpgprIt3XZFhsOk; Path=/v1/auth; HttpOnly; SameSite=Strict",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/auth/refresh-token",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"auth",
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Post-Service",
+			"item": [
+				{
+					"name": "Interact",
+					"item": [
+						{
+							"name": "Check Like",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNTE0ZTc5Ni1hODhmLTRkNDAtYWI1MS1lMDRkNDNjNjc3MjQiLCJleHAiOjE3NDc1NzU5MzUsImlhdCI6MTc0NzQ4OTUzNX0.FWDeNI6_6xtIwP1qimdi2KzoocRQZDZnBTvrqUi3Lc",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"UserId\" : \"0514e796-a88f-4d40-ab51-e04d43c67724\",\n    \"PostId\" : \"befb78da-1b8d-4360-8679-30d1f9ea7b4f\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/interact/check-like",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"interact",
+										"check-like"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Like",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\" : \"f8e8c59f-df85-466a-b78c-162c69a3ae58\",\n    \"postId\" : \"ced65766-4cf5-49eb-bc2c-205002dd004d\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/interact/add-like",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"interact",
+										"add-like"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Comment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\" : \"f8e8c59f-df85-466a-b78c-162c69a3ae58\",\n    \"postId\" : \"ced65766-4cf5-49eb-bc2c-205002dd004d\",\n    \"comment\" : \"HI bro\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/interact/add-comment",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"interact",
+										"add-comment"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Like",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\" : \"f8e8c59f-df85-466a-b78c-162c69a3ae58\",\n    \"postId\" : \"ced65766-4cf5-49eb-bc2c-205002dd004d\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/interact/delete-like",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"interact",
+										"delete-like"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Comment",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"Id\" : \"ed074c0f-b69f-4c0f-b3f9-5a925d40974f\",\n    \"postId\" : \"ced65766-4cf5-49eb-bc2c-205002dd004d\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/interact/delete-comment",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"interact",
+										"delete-comment"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Post",
+					"item": [
+						{
+							"name": "Get Post",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/api/v1/post/get-post",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"post",
+										"get-post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add Post",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNTE0ZTc5Ni1hODhmLTRkNDAtYWI1MS1lMDRkNDNjNjc3MjQiLCJleHAiOjE3NDgxNDI0ODUsImlhdCI6MTc0ODA1NjA4NX0.6ccvvaoMHu15P_NnTeZgpx7o2j3VqgZTsckWzI5NH1c",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"userId\" : \"f8e8c59f-df85-466a-b78c-162c69a3ae58\",\n    \"content\": \"Hi\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{HOST}}/api/v1/post/add-post",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"post",
+										"add-post"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Post",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{HOST}}/api/v1/post/delete-post?id=a3f9930b-01aa-4dd6-8dd1-cb2f9263bf77",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"post",
+										"delete-post"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "a3f9930b-01aa-4dd6-8dd1-cb2f9263bf77"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User-Service",
+			"item": [
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjFlN2NmYS1iZjZiLTQ4ZDMtYTJkYi1kYmI5Y2NlYzNmMGQiLCJleHAiOjE3NTgyNzA2NjQsImlhdCI6MTc1ODE4NDI2NH0.364vwQh7ouTgmnUaiFuxM-NltDzKk54TM0FXoGaMsHc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/user/get-user?id=cb1e7cfa-bf6b-48d3-a2db-dbb9ccec3f0d",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"get-user"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "cb1e7cfa-bf6b-48d3-a2db-dbb9ccec3f0d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNTE0ZTc5Ni1hODhmLTRkNDAtYWI1MS1lMDRkNDNjNjc3MjQiLCJleHAiOjE3NDg2MDg5NTAsImlhdCI6MTc0ODUyMjU1MH0.eTgySO0-pvVQWtEsLyRy2bihL9Ypo3ra8cpcLCR5ZD4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ID\": \"0514e796-a88f-4d40-ab51-e04d43c67724\",\n    \"UserName\": \"test\",\n    \"FullName\": \"Bill\",\n    \"Email\": \"test@gmail.com\",\n    \"ProfilePicture\" : \"\",\n    \"Description\" : \"\",\n    \"Location\" : \"\",\n    \"Website\": null,\n    \"Birthdate\" : \"2006-01-02T15:04:05Z\",\n    \"Theme\" : \"\",\n    \"Language\": \"\",\n    \"Country\" : \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/user/update-info",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"update-info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwNTE0ZTc5Ni1hODhmLTRkNDAtYWI1MS1lMDRkNDNjNjc3MjQiLCJleHAiOjE3NDg2MDg5NTAsImlhdCI6MTc0ODUyMjU1MH0.eTgySO0-pvVQWtEsLyRy2bihL9Ypo3ra8cpcLCR5ZD4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ID\" : \"0514e796-a88f-4d40-ab51-e04d43c67724\",\n    \"OldPassword\" : \"4321\",\n    \"NewPassword\" : \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/user/change-password",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"user",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Notification-Service",
+			"item": [
+				{
+					"name": "Get Notify List with Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBjMTE2NS0wYzgwLTRmZjktOTg2MC1mMGZhY2I5NDJhYzQiLCJleHAiOjE3NTgxOTU5ODAsImlhdCI6MTc1ODEwOTU4MH0.B1C-WxhRK1j9X1zqh9ENTOrTbqRyADT7h7Dz-OKQrWY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/notifications/get?id=4b6f27a0-117c-40e6-90b1-9bd8d46f5768",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"get"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4b6f27a0-117c-40e6-90b1-9bd8d46f5768"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Count Unread Notifications",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBjMTE2NS0wYzgwLTRmZjktOTg2MC1mMGZhY2I5NDJhYzQiLCJleHAiOjE3NTgxOTcxMTgsImlhdCI6MTc1ODExMDcxOH0.Q-6sOz4dVRVBlvbN9jAxt49oH4c64LSBzntzvTrfJf8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/notifications/unread-count?id=4b6f27a0-117c-40e6-90b1-9bd8d46f5768",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"unread-count"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "4b6f27a0-117c-40e6-90b1-9bd8d46f5768"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Notification",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBjMTE2NS0wYzgwLTRmZjktOTg2MC1mMGZhY2I5NDJhYzQiLCJleHAiOjE3NTI2Mzc2OTYsImlhdCI6MTc1MjU1MTI5Nn0.U97lAzE5hiFCHwiH-wg830a_4gH_NLj988mREpmpvNk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"SenderId\" : \"550c1165-0c80-4ff9-9860-f0facb942ac4\",\n    \"ReceiverId\" : \"4b6f27a0-117c-40e6-90b1-9bd8d46f5768\",\n    \"Messages\":\"Ppl\",\n    \"Type\" : \"like\",\n    \"Url\" : \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/v1/notifications/send",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Read Notifications",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/notifications/96c17dfc-083e-4ba3-bca5-c1984a063068/read",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"notifications",
+								"96c17dfc-083e-4ba3-bca5-c1984a063068",
+								"read"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat-Service",
+			"item": [
+				{
+					"name": "Get Chat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYjFlN2NmYS1iZjZiLTQ4ZDMtYTJkYi1kYmI5Y2NlYzNmMGQiLCJleHAiOjE3NTgyMDE3NTgsImlhdCI6MTc1ODExNTM1OH0.LDOodzEcvkZ907QAYnJ0rrfjoa7YMDmC55M6e5kpqR8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/v1/chat/get-message?limit=2&offset=0&roomId=fb5baade-5375-409a-a164-c7f7d3ca4b51",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"get-message"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "roomId",
+									"value": "fb5baade-5375-409a-a164-c7f7d3ca4b51"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Chat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBjMTE2NS0wYzgwLTRmZjktOTg2MC1mMGZhY2I5NDJhYzQiLCJleHAiOjE3NTUwNTYxMzksImlhdCI6MTc1NDk2OTczOX0.YTzVu7nYIqsrmls9v_7GRYO34sATAjEN77-5f2kVkKY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"SenderId\" : \"550c1165-0c80-4ff9-9860-f0facb942ac4\",\n    \"ReceiverId\" : \"4b6f27a0-117c-40e6-90b1-9bd8d46f5768\",\n    \"Content\" : \"Hi Bill\",\n    \"MessageType\" : \"text\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/api/v1/chat/send?chatType=private",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"send"
+							],
+							"query": [
+								{
+									"key": "chatType",
+									"value": "private"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Chat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBjMTE2NS0wYzgwLTRmZjktOTg2MC1mMGZhY2I5NDJhYzQiLCJleHAiOjE3NTUwNTYxMzksImlhdCI6MTc1NDk2OTczOX0.YTzVu7nYIqsrmls9v_7GRYO34sATAjEN77-5f2kVkKY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/v1/chat/delete?messageId=25690854-6148-4559-b68e-4aefe6eca278",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"chat",
+								"delete"
+							],
+							"query": [
+								{
+									"key": "messageId",
+									"value": "25690854-6148-4559-b68e-4aefe6eca278"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/billzayy/social-media/api-gateway/internal/handlers"
 	"github.com/billzayy/social-media/api-gateway/internal/routes"
+	"github.com/billzayy/social-media/api-gateway/internal/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -56,7 +57,11 @@ func main() {
 	r.ForwardedByClientIP = true
 	r.SetTrustedProxies([]string{"127.0.0.1", "192.168.1.2", "10.0.0.0/8"})
 
-	routes.SetupRoutes(r, h)
+	socketServer := utils.NewWebSocketServer()
+
+	go socketServer.Run()
+
+	routes.SetupRoutes(r, h, socketServer)
 
 	log.Printf("REST API server started on :%v\n", os.Getenv("REST_PORT"))
 	r.Run(":" + os.Getenv("REST_PORT")) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")

@@ -1,6 +1,6 @@
-# Chat Service - Social Media Apis Golang
+# Notification Service - Social Media Apis Golang
 
-This service is created for Get and Send Chat APIs with Websocket server.
+This service is created for Get and Send Notification APIs with RabbitMQ
 
 Using: Supabase Postgres, Redis, Websocket, RabbitMq JWT and GoLang to build.
 
@@ -29,6 +29,7 @@ $ make -f ./scripts/Makefile install
 ```
 P/S: If some packages are need to upgrade, you just run `go get <package need upgrade>` to upgrade.
 
+```
 ## Preparation for develop
 All you need is create `.env` file and replace all values `<>` of this properties:
 ```bash
@@ -49,7 +50,7 @@ RABBITMQ_PORT="<RabbitMQ Port>" # default: 5672
 
 REST_PORT="<Rest Port>" # default: 3000
 GRPC_PORT="<Grpc Port>" # default: 50051
-WS_PORT="<Websocket Port>" # default: 9000
+WS_PORT="<Websocket Port>" # default: 90000
 
 ACCESS_TOKEN_KEY="<Access Token>" # default: ""
 REFRESH_TOKEN_KEY="<Refresh Token>" # default: ""
@@ -83,7 +84,7 @@ If you want to build image for this project step-by-step, run `make` command wit
     ```bash
     $ make -f ./scripts/Makefile generate
     ```
-* `build` : To build docker image for `chat-service` service with [`Dockerfile`](./Dockerfile)
+* `build` : To build docker image for `notification-service` service with [`Dockerfile`](./Dockerfile)
     ```bash
     $ make -f ./scripts/Makefile build
     $ docker images # check created images

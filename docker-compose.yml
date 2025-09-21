@@ -4,7 +4,7 @@ services:
     image: coderbillzay/social-api-gateway
     container_name: api-gateway
     ports:
-      - "${REST_PORT}:${REST_PORT}"
+      - "${REST_PORT:-8000}:6950"
     depends_on:
       - authen-service
       - post-server
@@ -18,7 +18,7 @@ services:
     image: coderbillzay/social-authen-service
     container_name: authen-service
     ports:
-      - "${AUTH_PORT}:${AUTH_GRPC}"
+      - "${AUTH_PORT:-50051}:50051"
     networks:
       - app-network
 
@@ -26,7 +26,7 @@ services:
     image: coderbillzay/social-post-service
     container_name: post-service
     ports:
-      - "${POST_PORT}:${POST_GRPC}"
+      - "${POST_PORT:-50052}:50052"
     networks:
       - app-network
 
@@ -34,7 +34,7 @@ services:
     image: coderbillzay/social-user-service
     container_name: user-service
     ports:
-      - "${USER_PORT}:${USER_GRPC}"
+      - "${USER_PORT:-50053}:50053"
     networks:
       - app-network
 
@@ -42,12 +42,12 @@ services:
     image: coderbillzay/social-notification-service
     container_name: notification-service
     ports:
-      - "${NOTIFICATION_PORT}:${NOTIFICATION_GRPC}"
+      - "${NOTIFICATION_PORT:-50054}:50054"
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USERNAME=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS:-guest}
     depends_on:
       - rabbitmq
     networks:
@@ -57,13 +57,12 @@ services:
     image: coderbillzay/social-chat-service
     container_name: chat-service
     ports:
-      - "${CHAT_PORT}:${CHAT_GRPC}"
-      - "${CHAT_MESSAGE}:9000"
+      - "${CHAT_PORT:-50055}:50055"
     environment:
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=${RABBITMQ_PORT}
-      - RABBITMQ_USERNAME=${RABBITMQ_USER}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASS}
+      - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
+      - RABBITMQ_USERNAME=${RABBITMQ_USER:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASS:-guest}
     depends_on:
       - rabbitmq
     networks:
@@ -73,14 +72,15 @@ services:
     image: rabbitmq:4-management
     container_name: rabbitmq
     ports:
-      - "${RABBITMQ_PORT}:5672"    # AMQP port
-      - "${RABBITMQ_MANAGEMENT}:15672"  # Management UI
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT:-15672}:15672"
     environment:
-      - RABBITMQ_DEFAULT_USERNAME=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASS}
+      - RABBITMQ_DEFAULT_USERNAME=${RABBITMQ_USER:-guest}
+      - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_PASS:-guest}
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
+    

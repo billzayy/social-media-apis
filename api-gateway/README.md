@@ -1,24 +1,93 @@
+# API Gateway - Social Media Apis Golang
+
+This service is created for become an API Gateway with Middleware before access API
+
+Using: gRPC, JWT and GoLang to build.
+
+***P/S***: If you want to develop your own api with this project, please add file `.env` into [`./internal`](./internal/) and fill the file with [`Preparation for Develop`](#preparation-for-develop) below.
+
+## Install & Download 
+Before run the application, ensure that you already downloaded all necessary packages and apps:
+* [`Go Package`](https://go.dev/doc/install)
+* [`Docker Desktop`](https://docs.docker.com/desktop/)
+* [`Postman` ](https://www.postman.com/downloads/)
+* [`Protocol Buffer Compiler`](https://protobuf.dev/installation/)
+* [`Swagger for Golang`](https://goswagger.io/go-swagger/install/install-source/)
+
+You can check if some tools are already downloaded or not with : 
+```bash
+$ go version # check golang version
+$ swag --version # check swagger version 
+$ protoc --version # check protocol buffer compiler
 ```
-AUTH_PORT=
-POST_PORT=
-USER_PORT=
-NOTIFICATION_PORT=
-CHAT_PORT=
 
-AUTH_GRPC=
-POST_GRPC=
-USER_GRPC=
-NOTIFICATION_GRPC=
-CHAT_GRPC=
-
-REST_PORT=
-CHAT_MESSAGE=
-
-RABBITMQ_PORT=
-RABBITMQ_USER=
-RABBITMQ_PASS=
-RABBITMQ_MANAGEMENT=
-
-ACCESS_TOKEN_KEY=
-REFRESH_TOKEN_KEY=
+Before you want to developer this service, please run `go get all` or `make -f ./scripts/Makefile install` to download all packages.
+```bash
+$ go get all
+or
+$ make -f ./scripts/Makefile install
 ```
+P/S: If some packages are need to upgrade, you just run `go get <package need upgrade>` to upgrade.
+
+## Preparation for develop
+All you need is create `.env` file and replace all values `<>` of this properties:
+```bash
+AUTH_PORT="<Auth GRPC Port>" # default: 50051
+POST_PORT="<Auth GRPC Port>" # default: 50052
+USER_PORT="<Auth GRPC Port>" # default: 50053
+NOTIFICATION_PORT="<Auth GRPC Port>" # default: 50054
+CHAT_PORT="<Auth GRPC Port>" # default: 50055
+
+REST_PORT="<Rest Port>" # default: 8000
+
+RABBITMQ_PORT="<RabbitMQ Port>" # default: 5672
+RABBITMQ_USER="<RabbitMQ Username>" # default: guest
+RABBITMQ_PASS="<RabbitMQ Password>" # default: guest
+RABBITMQ_MANAGEMENT="<RabbitMQ UI Port>" # default: 15672
+
+ACCESS_TOKEN_KEY="<Access Token>" # default: ""
+REFRESH_TOKEN_KEY="<Refresh Token>" # default: ""
+```
+*P/S:* 
+* Postgres in this project is [`Supabase`](https://supabase.com/). So all Postgres configuration is based on **Supabase**.
+* Redis in this project is from [`Redis Cloud`](https://app.redislabs.com/).
+
+## Run
+To run all step to build and push image project, run `make all` command:
+```bash
+$ make -f ./scripts/Makefile all
+or
+$ make all # if you are staying inside ./scripts folder
+``` 
+
+If you want to build image for this project step-by-step, run `make` command with some options:
+* `docker` : To automatic run build and push docker image command.
+    ```bash
+    $ make -f ./scripts/Makefile docker
+    ```
+* `install` : To download all go packages.
+    ```bash
+    $ make -f ./scripts/Makefile install
+    ```
+* `allow` : To allow permission `./scripts/generate.sh` file to run protoc config.
+    ```bash
+    $ make -f ./scripts/Makefile allow
+    ```
+* `generate` : To run protoc configure `./scripts/generate.sh`.
+    ```bash
+    $ make -f ./scripts/Makefile generate
+    ```
+* `build` : To build docker image for `auth-service` service with [`Dockerfile`](./Dockerfile)
+    ```bash
+    $ make -f ./scripts/Makefile build
+    $ docker images # check created images
+    ```
+* `push` : To push docker images into DockerHub
+    ```bash
+    $ make -f ./scripts/Makefile push
+* `clean` : To clean all cache docker images and volumes.
+    ```bash
+    $ make -f ./scripts/Makefile clean
+    ```
+---
+$${\color{lightgreen}HAPPY \space CODING \space 😉 \space !!!}$$	
