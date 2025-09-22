@@ -12,7 +12,8 @@ COPY ./docker-compose.yml .
 COPY . .
 
 # Expose ports defined in docker-compose.yml (adjust as needed, e.g., 50051-50055 for gRPC)
-EXPOSE 50051 50052 50053 50054 50055
+#EXPOSE 50051 50052 50053 50054 50055
+EXPORT 8000
 
 # Command to run docker-compose
 CMD ["docker-compose", "up", "--build"]
