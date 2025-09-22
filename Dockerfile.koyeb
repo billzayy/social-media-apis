@@ -1,0 +1,18 @@
+# Use a base image with Docker and Docker Compose
+FROM docker:20.10
+
+# Install Docker Compose
+RUN apk add --no-cache docker-compose
+
+# Set working directory
+WORKDIR /app
+
+# Copy docker-compose.yml and any necessary files (e.g., .env, service code)
+COPY ./docker-compose.yml .
+COPY . .
+
+# Expose ports defined in docker-compose.yml (adjust as needed, e.g., 50051-50055 for gRPC)
+EXPOSE 50051 50052 50053 50054 50055
+
+# Command to run docker-compose
+CMD ["docker-compose", "up", "--build"]
