@@ -12,6 +12,8 @@ services:
       - user-server
       - notification-server
       - chat-server
+    environments:
+      - APP_ENV=production
     networks:
       - app-network
 
