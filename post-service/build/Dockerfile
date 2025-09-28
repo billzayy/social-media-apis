@@ -1,6 +1,11 @@
 # Use Go base image
 FROM golang:latest AS builder
 
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+        
 # Create working directory
 WORKDIR /app
 

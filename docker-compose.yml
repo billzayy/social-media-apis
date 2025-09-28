@@ -2,6 +2,7 @@ name: social-media-api
 services:  
   api-gateway:
     image: coderbillzay/social-api-gateway
+    # build: .
     container_name: api-gateway
     ports:
       - "${REST_PORT:-8000}:6950"
