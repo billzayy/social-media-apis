@@ -19,7 +19,6 @@ import (
 // @version					1.0
 // @description				This is an API Gateway Server.
 // @BasePath					/
-// @schemes					http https
 // @securityDefinitions.apikey	BearerAuth
 // @in							header
 // @name						Authorization
@@ -32,7 +31,13 @@ func main() {
 		}
 	}
 
-	docs.SwaggerInfo.Host = "localhost:" + os.Getenv("REST_PORT")
+	if os.Getenv("APP_ENV") == "production" {
+		docs.SwaggerInfo.Host = "poised-janice-billzay-21089a93.koyeb.app"
+		docs.SwaggerInfo.Schemes = []string{"https"}
+	} else {
+		docs.SwaggerInfo.Host = "localhost:" + os.Getenv("REST_PORT")
+		docs.SwaggerInfo.Schemes = []string{"http"}
+	}
 
 	r := gin.New()
 
@@ -45,7 +50,7 @@ func main() {
 	})
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173","https://poised-janice-billzay-21089a93.koyeb.app"},                   // Allowed origins
+		AllowOrigins:     []string{"http://localhost:5173"},                   // Allowed origins
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}, // Allowed HTTP methods
 		AllowHeaders:     []string{"Content-Type", "Authorization"},           // Allowed headers
 		ExposeHeaders:    []string{"Content-Length"},                          // Exposed headers
