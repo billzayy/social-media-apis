@@ -10,6 +10,7 @@ Services:
 * Chat Service: created for Get and Send Chat APIs with Websocket server
 
 Deployment:
+
 [![Deploy to Koyeb](https://www.koyeb.com/static/images/deploy/button.svg)](https://app.koyeb.com/deploy?name=social-media-apis&type=git&repository=billzayy%2Fsocial-media-apis&branch=main&builder=dockerfile&dockerfile=Dockerfile.koyeb&privileged=true&instance_type=free&regions=was&instances_min=0&autoscaling_sleep_idle_delay=300&env%5BAPP_ENV%5D=production)
 
 ***P/S***: If you want to develop your own api with this project, please add file `.env` into `./api-gateway/internal/` and fill the file with [`Preparation for Develop`](#preparation-for-develop) below
