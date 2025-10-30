@@ -50,7 +50,7 @@ func (pH *PostHandler) GetPostHandler(c *gin.Context) {
 	resp, err := pH.PostService.GetPost()
 
 	if err != nil {
-		models.Response(c, http.StatusInternalServerError, err)
+		models.Response(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 

@@ -29,7 +29,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
 	BasePath:         "/",
-	Schemes:          []string{"http", "https"},
+	Schemes:          []string{},
 	Title:            "Swagger Social Media CRUD API",
 	Description:      "This is an API Gateway Server.",
 	InfoInstanceName: "swagger",

@@ -62,6 +62,7 @@ func (pS *PostService) GetPost() ([]models.PostResp, error) {
 	res, err := pS.PostRepository.GetPostRedis(ctx)
 
 	if err != nil {
+		fmt.Printf("Error here: %v \n", err.Error())
 		return []models.PostResp{}, err
 	}
 

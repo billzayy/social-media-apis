@@ -72,12 +72,12 @@ func (pR *PostRepository) GetPost() ([]models.PostResp, error) {
 
 		// Decode user JSON
 		if err := json.Unmarshal(userJSON, &post.Author); err != nil {
-			return []models.PostResp{}, fmt.Errorf("Error decoding user JSON: %v", err)
+			return []models.PostResp{}, fmt.Errorf("error decoding user JSON: %v", err)
 		}
 
 		// Decode media JSON
 		if err := json.Unmarshal(mediaJSON, &post.Media); err != nil {
-			return []models.PostResp{}, fmt.Errorf("Error decoding media JSON: %v", err)
+			return []models.PostResp{}, fmt.Errorf("error decoding media JSON: %v", err)
 		}
 
 		result = append(result, post)
@@ -106,8 +106,12 @@ func (pR *PostRepository) DeletePost(postId string) (int64, error) {
 
 func (pR *PostRepository) GetPostRedis(ctx context.Context) ([]models.PostResp, error) {
 	rawData, err := pR.rdb.JSONGet(ctx, "postList", "$").Result()
+
 	if err != nil {
-		return []models.PostResp{}, err
+		if err == redis.Nil {
+			return []models.PostResp{}, nil // Key doesn't exist, return empty slice
+		}
+		return []models.PostResp{}, fmt.Errorf("failed to retrieve posts from Redis: %w", err)
 	}
 
 	if rawData == "" {

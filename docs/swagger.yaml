@@ -5,9 +5,6 @@ info:
   title: Swagger Social Media CRUD API
   version: "1.0"
 paths: {}
-schemes:
-- http
-- https
 securityDefinitions:
   BearerAuth:
     in: header

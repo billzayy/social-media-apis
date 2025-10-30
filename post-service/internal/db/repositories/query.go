@@ -1,8 +1,6 @@
 package repositories
 
-import "fmt"
-
-var GetPostQuery = fmt.Sprintf(`
+var GetPostQuery = `
 	SELECT p."ID" AS "PostId",
 		json_build_object(
 			'ID', u."ID",
@@ -26,4 +24,4 @@ var GetPostQuery = fmt.Sprintf(`
 	LEFT JOIN public."PostMedia" pm ON pm."PostId" = p."ID"
 	GROUP BY p."ID", u."ID", u."FullName", u."ProfilePicture"
 	ORDER BY p."CreatedAt" DESC
-LIMIT 1000;`)
+LIMIT 1000;`
