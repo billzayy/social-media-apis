@@ -4,12 +4,12 @@ DOCKERFILE_GO_PATH=./build/Dockerfile
 DOCKER_CONTEXT=.
 
 # Build command will run as clone
-.PHONY: build
+.PHONY: build build-amd
 
 # Default target
 all: allow generate build
 
-docker: build push
+docker: build-amd push
 
 install:
 	go mod download
@@ -26,6 +26,11 @@ generate:
 build:
 	@echo "Building Docker Go image $(DOCKER_GO_IMAGE_NAME)..."
 	docker build -t $(DOCKER_GO_IMAGE_NAME) -f $(DOCKERFILE_GO_PATH) $(DOCKER_CONTEXT)
+
+# Build amd the Docker image
+build-amd:
+	@echo "Building Docker Go image $(DOCKER_GO_IMAGE_NAME)..."
+	docker buildx build --platform linux/amd64 -t $(DOCKER_GO_IMAGE_NAME) -f $(DOCKERFILE_GO_PATH) $(DOCKER_CONTEXT)
 
 # Push image into DockerHub 
 push: 

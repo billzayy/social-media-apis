@@ -9,6 +9,8 @@ ENV_FILE_PATH =./api-gateway/internal/.env
 # Default target
 all: swagger run-docker
 
+docker: build-amd push
+
 # Format & Update swagger docs folder
 swagger:
 	@echo "Generate Swagger files ..."
@@ -29,6 +31,11 @@ run-docker-with-env:
 build-image:
 	@echo "Building Docker Go image $(DOCKER_GO_IMAGE_NAME)..."
 	docker build -t $(DOCKER_GO_IMAGE_NAME) -f $(DOCKERFILE_GO_PATH) $(DOCKER_CONTEXT)
+
+# Build amd the Docker image
+build-amd:
+	@echo "Building Docker Go image $(DOCKER_GO_IMAGE_NAME)..."
+	docker buildx build --platform linux/amd64 -t $(DOCKER_GO_IMAGE_NAME) -f $(DOCKERFILE_GO_PATH) $(DOCKER_CONTEXT)
 
 # Push image into DockerHub
 push:
